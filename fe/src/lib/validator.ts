@@ -36,6 +36,7 @@ export const profileDetailsSchema = z.object({
     gpa: z.string().regex(/^\d(\.\d{1,2})?$/, 'Please enter a valid GPA'),
     about: z.string().min(20, 'About section must be at least 20 characters').max(1000, 'About section must be less than 1000 characters'),
     interests: z.array(z.string()).min(1, 'Select at least one interest'),
+    skills: z.array(z.string()).min(1, 'Select at least one skill'),
     profileImage: z.instanceof(File).optional(),
     academicStats: z.string().max(500, 'Academic stats must be less than 500 characters').optional(),
 });

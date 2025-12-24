@@ -10,6 +10,17 @@ import { useRouter } from 'next/navigation';
 import { FileUp, BookOpen } from 'lucide-react';
 import { useState } from 'react';
 
+const ACADEMIC_STREAMS = [
+    'Science',
+    'Commerce',
+    'Humanities',
+    'Engineering',
+    'Medical',
+    'Law',
+    'Business Administration',
+    'Information Technology',
+];
+
 const INTERESTS = [
     'Mathematics',
     'Physics',
@@ -25,21 +36,27 @@ const INTERESTS = [
     'Languages',
 ];
 
-const ACADEMIC_STREAMS = [
-    'Science',
-    'Commerce',
-    'Humanities',
-    'Engineering',
-    'Medical',
-    'Law',
-    'Business Administration',
-    'Information Technology',
+
+const SKILLS = [
+    'Problem Solving',
+    'Critical Thinking',
+    'Communication',
+    'Teamwork',
+    'Leadership',
+    'Time Management',
+    'Research',
+    'Data Analysis',
+    'Public Speaking',
+    'Writing',
+    'Programming',
+    'Project Management',
 ];
 
 export default function ProfileDetailsPage() {
     const router = useRouter();
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+    const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
 
     const {
         register,
@@ -71,13 +88,21 @@ export default function ProfileDetailsPage() {
         );
     };
 
+    const toggleSkill = (skill: string) => {
+        setSelectedSkills((prev) =>
+            prev.includes(skill)
+                ? prev.filter((s) => s !== skill)
+                : [...prev, skill]
+        );
+    };
+
     const onSubmit = async (data: ProfileDetailsFormData) => {
-        // Add selected interests to data
+        // Add selected interests and skills to data
         const formData = {
             ...data,
             interests: selectedInterests,
+            skills: selectedSkills,
         };
-
         // Mock submission - simulate API call
         await new Promise((resolve) => setTimeout(resolve, 1500));
         console.log('Profile details:', formData);
@@ -239,12 +264,40 @@ export default function ProfileDetailsPage() {
                             )}
                         </div>
 
+                        {/* Skills */}
+                        <div>
+                            <label className="block text-sm font-medium text-zinc-900 mb-4">
+                                Skills
+                            </label>
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                {SKILLS.map((skill) => (
+                                    <button
+                                        key={skill}
+                                        type="button"
+                                        onClick={() => toggleSkill(skill)}
+                                        className={`px-4 py-2 rounded-lg border transition font-medium text-sm ${
+                                            selectedSkills.includes(skill)
+                                                ? 'bg-zinc-900 text-white border-zinc-900'
+                                                : 'bg-white text-zinc-900 border-zinc-300 hover:border-zinc-400'
+                                        }`}
+                                    >
+                                        {skill}
+                                    </button>
+                                ))}
+                            </div>
+                            {selectedSkills.length === 0 && (
+                                <p className="text-sm text-red-500 mt-2">
+                                    Please select at least one skill
+                                </p>
+                            )}
+                        </div>
+
                         {/* Submit Button */}
                         <Button
                             type="submit"
                             fullWidth
                             size="lg"
-                            disabled={isSubmitting || selectedInterests.length === 0}
+                            disabled={isSubmitting || selectedInterests.length === 0 || selectedSkills.length === 0}
                         >
                             {isSubmitting ? 'Creating Profile...' : 'Complete Profile'}
                         </Button>
