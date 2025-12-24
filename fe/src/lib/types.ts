@@ -33,6 +33,9 @@ export interface User {
   email: string;
   createdAt?: Date;
 
+  // components expect .name on the user object in places — keep it optional
+  name?: string;
+
   profile?: UserProfile;
   helperStats?: HelperStats;
 }
@@ -88,6 +91,19 @@ export interface BeaconApplication {
 }
 
 /* =========================
+   MESSAGE
+   (added so Chat UI has a type to work with)
+========================= */
+
+export interface Message {
+  id: string;
+  sessionId: string;
+  senderId: string;
+  content: string;
+  timestamp: Date;
+}
+
+/* =========================
    SESSION
 ========================= */
 
@@ -108,6 +124,9 @@ export interface Session {
   helper?: User;
 
   ratings?: Rating[];
+
+  // messages for chat UI
+  messages?: Message[];
 }
 
 /* =========================

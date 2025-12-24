@@ -1,10 +1,9 @@
-// RatingModal component
 'use client';
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ratingSchema, type RatingFormData } from '@/lib/validators';
+import { ratingSchema, type RatingFormData } from '@/lib/validator';
 import Modal from '@/components/ui/Modal';
 import Textarea from '@/components/ui/Textarea';
 import Button from '@/components/ui/Button';

@@ -1,4 +1,3 @@
-// MessageBubble component
 import { Message } from '@/lib/types';
 import { formatRelativeTime } from '@/lib/utils';
 

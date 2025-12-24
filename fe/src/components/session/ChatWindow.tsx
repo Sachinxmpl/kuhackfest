@@ -1,4 +1,3 @@
-// ChatWindow component
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -19,7 +18,7 @@ export default function ChatWindow({
     currentUserId,
     onSendMessage,
 }: ChatWindowProps) {
-    const [messages, setMessages] = useState<Message[]>(session.messages);
+    const [messages, setMessages] = useState<Message[]>(session.messages ?? []);
     const [inputValue, setInputValue] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -39,12 +38,12 @@ export default function ChatWindow({
             timestamp: new Date(),
         };
 
-        setMessages([...messages, newMessage]);
+        setMessages((prev) => [...prev, newMessage]);
         setInputValue('');
-        onSendMessage?.(inputValue.trim());
+        onSendMessage?.(newMessage.content);
     };
 
-    const handleKeyPress = (e: React.KeyboardEvent) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             handleSend();
@@ -52,7 +51,7 @@ export default function ChatWindow({
     };
 
     return (
-        <div className="flex flex-col h-[600px] bg-white border border-zinc-200 rounded-lg">
+        <div className="flex flex-col h-150 bg-white border border-zinc-200 rounded-lg">
             {/* Messages area */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {messages.length === 0 ? (
@@ -68,8 +67,8 @@ export default function ChatWindow({
                             const isCurrentUser = message.senderId === currentUserId;
                             const senderName =
                                 message.senderId === session.helperId
-                                    ? session.helper.name
-                                    : session.requester.name;
+                                    ? session.helper?.name ?? 'Helper'
+                                    : session.learner?.name ?? 'Learner';
 
                             return (
                                 <MessageBubble
@@ -91,7 +90,7 @@ export default function ChatWindow({
                     <textarea
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
-                        onKeyPress={handleKeyPress}
+                        onKeyDown={handleKeyDown}
                         placeholder="Type your message..."
                         rows={2}
                         className="flex-1 px-3 py-2 border border-zinc-300 rounded-lg text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent resize-none"
