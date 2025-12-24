@@ -54,7 +54,7 @@ export default function ChatWindow({
         <div className="flex flex-col h-150 bg-white border border-zinc-200 rounded-lg">
             {/* Messages area */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {messages.length === 0 ? (
+                {messages && messages.length === 0 ? (
                     <div className="flex items-center justify-center h-full text-zinc-500">
                         <div className="text-center">
                             <AlertCircle className="w-12 h-12 mx-auto mb-3 text-zinc-300" />

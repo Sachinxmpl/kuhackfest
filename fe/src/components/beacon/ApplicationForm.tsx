@@ -3,7 +3,7 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { applicationSchema, type ApplicationFormData } from '@/lib/validators';
+import { applicationSchema, type ApplicationFormData } from '@/lib/validator';
 import { currentUser } from '@/lib/mock-data';
 import ProfileCard from '@/components/profile/ProfileCard';
 import Textarea from '@/components/ui/Textarea';

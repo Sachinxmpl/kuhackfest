@@ -1,7 +1,6 @@
 // BeaconCard component
 'use client';
-
-import { Beacon } from '@/lib/types';
+import { Beacon, BeaconType } from '@/lib/types';
 import { formatRelativeTime, truncate } from '@/lib/utils';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
@@ -17,25 +16,26 @@ export interface BeaconCardProps {
 
 export default function BeaconCard({ beacon, onApply, onView }: BeaconCardProps) {
     const [relativeTime, setRelativeTime] = useState<string>('');
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        setMounted(true);
         setRelativeTime(formatRelativeTime(beacon.createdAt));
     }, [beacon.createdAt]);
 
-    const isUrgent = beacon.type === 'Urgent';
+    const isUrgent = beacon.type === BeaconType.URGENT;
 
     return (
         <div
-            className={`bg-white border rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow ${isUrgent ? 'border-orange-200 bg-orange-50/30' : 'border-zinc-200'
-                }`}
+            className={`bg-white border rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow ${
+                isUrgent ? 'border-orange-200 bg-orange-50/30' : 'border-zinc-200'
+            }`}
         >
             {/* Header */}
             <div className="flex items-start justify-between gap-3 mb-3">
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2">
-                        <Badge size="sm" variant={isUrgent ? 'warning' : 'default'}>
-                            {beacon.topic}
-                        </Badge>
+                        <Badge variant="info">{beacon.status}</Badge>
                         {isUrgent && (
                             <Badge size="sm" variant="warning" className="gap-1">
                                 <AlertCircle className="w-3 h-3" />
@@ -68,10 +68,12 @@ export default function BeaconCard({ beacon, onApply, onView }: BeaconCardProps)
                         <User className="w-4 h-4 text-zinc-600" />
                     )}
                 </div>
-                <span className="text-sm text-zinc-600">{beacon.creator?.profile?.name || 'Anonymous'}</span>
+                <span className="text-sm text-zinc-600">
+                    {beacon.creator?.profile?.name || 'Anonymous'}
+                </span>
                 <span className="text-sm text-zinc-400">•</span>
-                <span className="text-sm text-zinc-500">
-                    {relativeTime || 'just now'}
+                <span className="text-sm text-zinc-500" suppressHydrationWarning>
+                    {mounted ? relativeTime || 'just now' : 'just now'}
                 </span>
             </div>
 
@@ -81,10 +83,10 @@ export default function BeaconCard({ beacon, onApply, onView }: BeaconCardProps)
                     <CountdownTimer targetDate={beacon.expiresAt} />
                 ) : (
                     <div className="text-sm text-zinc-500">
-                        {beacon.applications?.length || 0} applicant{(beacon.applications?.length || 0) !== 1 ? 's' : ''}
+                        {beacon.applications?.length || 0} applicant
+                        {(beacon.applications?.length || 0) !== 1 ? 's' : ''}
                     </div>
                 )}
-
                 <Button
                     size="sm"
                     onClick={() => onApply?.(beacon.id)}

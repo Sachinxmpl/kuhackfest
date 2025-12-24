@@ -67,7 +67,7 @@ export interface Beacon {
   expiresAt?: Date;
 
   creatorId: string;
-  creator?: User;
+  creator: User;
 
   applications?: BeaconApplication[];
   session?: Session;

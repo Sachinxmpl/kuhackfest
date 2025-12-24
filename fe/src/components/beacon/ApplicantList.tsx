@@ -1,14 +1,13 @@
-// ApplicantList component for beacon owners to view and select helpers
 'use client';
 
-import { Application } from '@/lib/types';
+import { BeaconApplication, User } from '@/lib/types';
 import ProfileCard from '@/components/profile/ProfileCard';
 import Button from '@/components/ui/Button';
 import { formatRelativeTime } from '@/lib/utils';
 import { CheckCircle, Clock } from 'lucide-react';
 
 export interface ApplicantListProps {
-    applications: Application[];
+    applications: BeaconApplication[];
     selectedHelperId?: string;
     onSelectHelper: (helperId: string) => void;
 }
@@ -34,15 +33,15 @@ export default function ApplicantList({
 
     // Sort by experience score and rating
     const sortedApplications = [...applications].sort((a, b) => {
-        const scoreA = a.helper.points + a.helper.rating * 100;
-        const scoreB = b.helper.points + b.helper.rating * 100;
+        const scoreA = (a.helper?.helperStats?.totalPoints || 0) + (a.helper?.helperStats?.avgRating || 0) * 100;
+        const scoreB = (b.helper?.helperStats?.totalPoints || 0) + (b.helper?.helperStats?.avgRating || 0) * 100;
         return scoreB - scoreA;
     });
 
     return (
         <div className="space-y-4">
             <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-zinc-900">
+                <h3 className="text-xl font-semibold text-zinc-900 mb-4">
                     Applications ({applications.length})
                 </h3>
                 <p className="text-sm text-zinc-600">
@@ -55,7 +54,7 @@ export default function ApplicantList({
                     key={application.id}
                     className="bg-white border border-zinc-200 rounded-lg p-5 space-y-4"
                 >
-                    <ProfileCard user={application.helper} showStats={true} />
+                    <ProfileCard user={application.helper as User} showStats={true} />
 
                     {/* Application message */}
                     <div>

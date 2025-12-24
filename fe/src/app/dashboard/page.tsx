@@ -1,13 +1,12 @@
-// Dashboard page - main beacon feed
 'use client';
 
 import { useState, useMemo } from 'react';
 import { mockBeacons, currentUser } from '@/lib/mock-data';
 import { Beacon, BeaconStatus, BeaconType } from '@/lib/types';
 import { BeaconFormData } from '@/lib/validator';
-import BeaconCard from '@/components/beacons/BeaconCard';
-import BeaconFilter from '@/components/beacons/BeaconFilter';
-import BeaconForm from '@/components/beacons/BeaconForm';
+import BeaconCard from '@/components/beacon/BeaconCard';
+import BeaconFilter from '@/components/beacon/BeaconFilter';
+import BeaconForm from '@/components/beacon/BeaconForm';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
 import { Plus, Lightbulb } from 'lucide-react';
@@ -39,8 +38,8 @@ export default function DashboardPage() {
     const sortedBeacons = useMemo(() => {
         return [...filteredBeacons].sort((a, b) => {
             // Urgent beacons first
-            if (a.type === BeaconType.URGENT && b.type !== BeaconType.NORMAL) return -1;
-            if (a.type !== BeaconType.NORMAL && b.type === BeaconType.URGENT) return 1;
+            if (a.type === BeaconType.URGENT && b.type !== BeaconType.URGENT) return -1;
+            if (a.type !== BeaconType.URGENT && b.type === BeaconType.URGENT) return 1;
 
             // Then by date (newest first)
             return b.createdAt.getTime() - a.createdAt.getTime();
@@ -54,9 +53,9 @@ export default function DashboardPage() {
         const newBeacon: Beacon = {
             id: generateId(),
             creatorId: currentUser.id,
+            creator: currentUser,
             title: data.title,
             description: data.description,
-            // topic: data.topic,
             type: data.type,
             status: BeaconStatus.OPEN,
             createdAt: new Date(),

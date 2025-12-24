@@ -9,6 +9,7 @@ import Input from '@/components/ui/Input';
 import Textarea from '@/components/ui/Textarea';
 import Button from '@/components/ui/Button';
 import { AlertCircle } from 'lucide-react';
+import { BeaconType } from '@/lib/types';
 
 export interface BeaconFormProps {
     onSubmit: (data: BeaconFormData) => void;
@@ -25,12 +26,12 @@ export default function BeaconForm({ onSubmit, onCancel }: BeaconFormProps) {
     } = useForm<BeaconFormData>({
         resolver: zodResolver(beaconSchema),
         defaultValues: {
-            type: 'Normal',
+            type: BeaconType.NORMAL,
         },
     });
 
     const beaconType = watch('type');
-    const isUrgent = beaconType === 'Urgent';
+    const isUrgent = beaconType === BeaconType.URGENT;
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -58,7 +59,7 @@ export default function BeaconForm({ onSubmit, onCancel }: BeaconFormProps) {
                 </label>
                 <select
                     className="w-full px-3 py-2 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent"
-                    {...register('topic')}
+                    {...register('title')}
                 >
                     <option value="">Select a topic</option>
                     {topicOptions.map((topic) => (
@@ -67,8 +68,8 @@ export default function BeaconForm({ onSubmit, onCancel }: BeaconFormProps) {
                         </option>
                     ))}
                 </select>
-                {errors.topic && (
-                    <p className="mt-1 text-sm text-red-600">{errors.topic.message}</p>
+                {errors.title && (
+                    <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
                 )}
             </div>
 

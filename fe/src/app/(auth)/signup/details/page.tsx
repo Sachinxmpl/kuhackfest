@@ -63,8 +63,13 @@ export default function ProfileDetailsPage() {
         handleSubmit,
         formState: { errors, isSubmitting },
         watch,
+        setValue,
     } = useForm<ProfileDetailsFormData>({
         resolver: zodResolver(profileDetailsSchema),
+        defaultValues: {
+            interests: [],
+            skills: [],
+        },
     });
 
     const profileImage = watch('profileImage');
@@ -81,33 +86,31 @@ export default function ProfileDetailsPage() {
     };
 
     const toggleInterest = (interest: string) => {
-        setSelectedInterests((prev) =>
-            prev.includes(interest)
+        setSelectedInterests((prev) => {
+            const updated = prev.includes(interest)
                 ? prev.filter((i) => i !== interest)
-                : [...prev, interest]
-        );
+                : [...prev, interest];
+
+            setValue('interests', updated, { shouldValidate: true });
+            return updated;
+        });
     };
 
+
     const toggleSkill = (skill: string) => {
-        setSelectedSkills((prev) =>
-            prev.includes(skill)
+        setSelectedSkills((prev) => {
+            const updated = prev.includes(skill)
                 ? prev.filter((s) => s !== skill)
-                : [...prev, skill]
-        );
+                : [...prev, skill];
+
+            setValue('skills', updated, { shouldValidate: true });
+            return updated;
+        });
     };
 
     const onSubmit = async (data: ProfileDetailsFormData) => {
-        // Add selected interests and skills to data
-        const formData = {
-            ...data,
-            interests: selectedInterests,
-            skills: selectedSkills,
-        };
-        // Mock submission - simulate API call
         await new Promise((resolve) => setTimeout(resolve, 1500));
-        console.log('Profile details:', formData);
-
-        // Redirect to dashboard or profile page
+        console.log('Profile details:', data);
         router.push('/profile');
     };
 
@@ -170,8 +173,8 @@ export default function ProfileDetailsPage() {
                             <Textarea
                                 label="About You"
                                 placeholder="Tell us about yourself, your academic journey, goals, and what makes you unique..."
-                                error={errors.about?.message}
-                                {...register('about')}
+                                error={errors.bio?.message}
+                                {...register('bio')}
                                 rows={5}
                             />
                             <p className="text-xs text-zinc-500 mt-2">
@@ -187,11 +190,10 @@ export default function ProfileDetailsPage() {
                                 </label>
                                 <select
                                     {...register('studyLevel')}
-                                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-900 transition text-zinc-900 ${
-                                        errors.studyLevel
-                                            ? 'border-red-500'
-                                            : 'border-zinc-300'
-                                    }`}
+                                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-900 transition text-zinc-900 ${errors.studyLevel
+                                        ? 'border-red-500'
+                                        : 'border-zinc-300'
+                                        }`}
                                 >
                                     <option value="">Select your study level</option>
                                     <option value="High School">High School</option>
@@ -213,11 +215,10 @@ export default function ProfileDetailsPage() {
                                 </label>
                                 <select
                                     {...register('academicStream')}
-                                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-900 transition text-zinc-900 ${
-                                        errors.academicStream
-                                            ? 'border-red-500'
-                                            : 'border-zinc-300'
-                                    }`}
+                                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-900 transition text-zinc-900 ${errors.academicStream
+                                        ? 'border-red-500'
+                                        : 'border-zinc-300'
+                                        }`}
                                 >
                                     <option value="">Select your stream</option>
                                     {ACADEMIC_STREAMS.map((stream) => (
@@ -234,9 +235,11 @@ export default function ProfileDetailsPage() {
                             </div>
                         </div>
 
-                        
+
 
                         {/* Interests */}
+                        <input type="hidden" {...register('interests')} />
+                        <input type="hidden" {...register('skills')} />
                         <div>
                             <label className="block text-sm font-medium text-zinc-900 mb-4">
                                 Areas of Interest
@@ -247,19 +250,18 @@ export default function ProfileDetailsPage() {
                                         key={interest}
                                         type="button"
                                         onClick={() => toggleInterest(interest)}
-                                        className={`px-4 py-2 rounded-lg border transition font-medium text-sm ${
-                                            selectedInterests.includes(interest)
-                                                ? 'bg-zinc-900 text-white border-zinc-900'
-                                                : 'bg-white text-zinc-900 border-zinc-300 hover:border-zinc-400'
-                                        }`}
+                                        className={`px-4 py-2 rounded-lg border transition font-medium text-sm ${selectedInterests.includes(interest)
+                                            ? 'bg-zinc-900 text-white border-zinc-900'
+                                            : 'bg-white text-zinc-900 border-zinc-300 hover:border-zinc-400'
+                                            }`}
                                     >
                                         {interest}
                                     </button>
                                 ))}
                             </div>
-                            {selectedInterests.length === 0 && (
+                            {errors.interests && (
                                 <p className="text-sm text-red-500 mt-2">
-                                    Please select at least one interest
+                                    {errors.interests.message}
                                 </p>
                             )}
                         </div>
@@ -275,19 +277,18 @@ export default function ProfileDetailsPage() {
                                         key={skill}
                                         type="button"
                                         onClick={() => toggleSkill(skill)}
-                                        className={`px-4 py-2 rounded-lg border transition font-medium text-sm ${
-                                            selectedSkills.includes(skill)
-                                                ? 'bg-zinc-900 text-white border-zinc-900'
-                                                : 'bg-white text-zinc-900 border-zinc-300 hover:border-zinc-400'
-                                        }`}
+                                        className={`px-4 py-2 rounded-lg border transition font-medium text-sm ${selectedSkills.includes(skill)
+                                            ? 'bg-zinc-900 text-white border-zinc-900'
+                                            : 'bg-white text-zinc-900 border-zinc-300 hover:border-zinc-400'
+                                            }`}
                                     >
                                         {skill}
                                     </button>
                                 ))}
                             </div>
-                            {selectedSkills.length === 0 && (
+                            {errors.skills && (
                                 <p className="text-sm text-red-500 mt-2">
-                                    Please select at least one skill
+                                    {errors.skills.message}
                                 </p>
                             )}
                         </div>
