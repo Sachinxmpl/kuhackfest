@@ -1,0 +1,64 @@
+// Application modal/page for applying to help
+'use client';
+
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { applicationSchema, type ApplicationFormData } from '@/lib/validators';
+import { currentUser } from '@/lib/mock-data';
+import ProfileCard from '@/components/profile/ProfileCard';
+import Textarea from '@/components/ui/Textarea';
+import Button from '@/components/ui/Button';
+import { Send } from 'lucide-react';
+
+export interface ApplicationFormProps {
+    beaconId: string;
+    onSubmit: (data: ApplicationFormData) => void;
+    onCancel?: () => void;
+}
+
+export default function ApplicationForm({
+    beaconId,
+    onSubmit,
+    onCancel,
+}: ApplicationFormProps) {
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+    } = useForm<ApplicationFormData>({
+        resolver: zodResolver(applicationSchema),
+    });
+
+    return (
+        <div className="space-y-6">
+            {/* User preview */}
+            <div>
+                <h3 className="text-sm font-medium text-zinc-700 mb-3">Your Profile</h3>
+                <ProfileCard user={currentUser} showStats={true} />
+            </div>
+
+            {/* Application form */}
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <Textarea
+                    label="Message to the requester"
+                    rows={4}
+                    placeholder="Introduce yourself and explain how you can help..."
+                    error={errors.message?.message}
+                    {...register('message')}
+                />
+
+                <div className="flex gap-3">
+                    <Button type="submit" fullWidth disabled={isSubmitting}>
+                        <Send className="w-4 h-4" />
+                        {isSubmitting ? 'Submitting...' : 'Submit Application'}
+                    </Button>
+                    {onCancel && (
+                        <Button type="button" variant="outline" onClick={onCancel}>
+                            Cancel
+                        </Button>
+                    )}
+                </div>
+            </form>
+        </div>
+    );
+}

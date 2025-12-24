@@ -1,0 +1,45 @@
+// CountdownTimer component for urgent beacons
+'use client';
+
+import { useEffect, useState } from 'react';
+import { getTimeRemaining, formatCountdown } from '@/lib/utils';
+import { Clock } from 'lucide-react';
+
+export interface CountdownTimerProps {
+    targetDate: Date;
+    onExpire?: () => void;
+}
+
+export default function CountdownTimer({ targetDate, onExpire }: CountdownTimerProps) {
+    const [timeRemaining, setTimeRemaining] = useState(getTimeRemaining(targetDate));
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            const remaining = getTimeRemaining(targetDate);
+            setTimeRemaining(remaining);
+
+            if (remaining.isExpired && onExpire) {
+                onExpire();
+                clearInterval(timer);
+            }
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [targetDate, onExpire]);
+
+    if (timeRemaining.isExpired) {
+        return (
+            <span className="flex items-center gap-1 text-sm text-red-600 font-medium">
+                <Clock className="w-4 h-4" />
+                Expired
+            </span>
+        );
+    }
+
+    return (
+        <span className="flex items-center gap-1 text-sm text-orange-600 font-medium">
+            <Clock className="w-4 h-4" />
+            {formatCountdown(timeRemaining.hours, timeRemaining.minutes, timeRemaining.seconds)}
+        </span>
+    );
+}
