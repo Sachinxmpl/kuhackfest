@@ -1,11 +1,10 @@
-/**
- * Socket.IO Setup for Real-time Chat
- * Handles real-time messaging during study sessions
- */
+// lib/socket.ts
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import { Server as HTTPServer } from 'http';
 import { verifyToken } from '../lib/jwt.js';
 import { prisma } from '../lib/prisma.js';
+import { messageStore } from './message.store.js'; // Import the store
+import { appEvents } from './events.js';
 
 interface SocketData {
     userId: string;
@@ -25,20 +24,25 @@ export const initializeSocketIO = (httpServer: HTTPServer): SocketIOServer => {
         },
     });
 
+    // Sync End Session Event
+    appEvents.on('session-ended', ({ sessionId }: {sessionId :any}) => {
+        io.to(sessionId).emit('session-ended', {
+            message: 'The session has been ended.',
+        });
+        // Optional: clear memory after session ends to save RAM
+        // messageStore.clearSession(sessionId); 
+    });
+
     io.use(async (socket: Socket, next) => {
         try {
             const token = socket.handshake.auth.token;
-
-            if (!token) {
-                return next(new Error('Authentication error: No token provided'));
-            }
+            if (!token) return next(new Error('Authentication error: No token provided'));
 
             const decoded = verifyToken(token);
             (socket.data as SocketData) = {
                 userId: decoded.userId,
                 email: decoded.email,
             };
-
             next();
         } catch (error) {
             next(new Error('Authentication error: Invalid token'));
@@ -47,101 +51,68 @@ export const initializeSocketIO = (httpServer: HTTPServer): SocketIOServer => {
 
     io.on('connection', (socket: Socket) => {
         const userId = (socket.data as SocketData).userId;
-        console.log(`User connected: ${userId}`);
 
         socket.on('join-session', async (sessionId: string) => {
+            // ... (Your existing validation logic remains the same) ...
             try {
-                // Verify user is part of the session
-                const session = await prisma.session.findUnique({
-                    where: { id: sessionId },
-                });
-
-                if (!session) {
-                    socket.emit('error', { message: 'Session not found' });
-                    return;
-                }
-
+                const session = await prisma.session.findUnique({ where: { id: sessionId } });
+                if (!session) { socket.emit('error', { message: 'Session not found' }); return; }
                 if (session.learnerId !== userId && session.helperId !== userId) {
-                    socket.emit('error', { message: 'You are not part of this session' });
-                    return;
+                    socket.emit('error', { message: 'Unauthorized' }); return;
                 }
 
-                // Join the room
                 socket.join(sessionId);
                 socket.emit('joined-session', { sessionId });
-
-                console.log(`User ${userId} joined session ${sessionId}`);
             } catch (error) {
-                console.error('Error joining session:', error);
-                socket.emit('error', { message: 'Failed to join session' });
+                console.error(error);
             }
         });
-        
+
         socket.on('send-message', async (payload: MessagePayload) => {
             try {
                 const { sessionId, message } = payload;
 
-                // Verify user is part of the session
-                const session = await prisma.session.findUnique({
-                    where: { id: sessionId },
-                    include: {
-                        learner: {
-                            include: {
-                                profile: true,
-                            },
-                        },
-                        helper: {
-                            include: {
-                                profile: true,
-                            },
-                        },
-                    },
+                // 1. Validate Session
+                const session = await prisma.session.findUnique({ where: { id: sessionId } });
+                if (!session || (session.learnerId !== userId && session.helperId !== userId)) {
+                    socket.emit('error', { message: 'Unauthorized' });
+                    return;
+                }
+
+                // 2. Fetch Sender Details (We still need this for the UI)
+                // We read User, but we DO NOT write to Message table
+                const sender = await prisma.user.findUnique({
+                    where: { id: userId },
+                    include: { profile: true }
                 });
 
-                if (!session) {
-                    socket.emit('error', { message: 'Session not found' });
-                    return;
-                }
+                if (!sender) return;
 
-                if (session.learnerId !== userId && session.helperId !== userId) {
-                    socket.emit('error', { message: 'You are not part of this session' });
-                    return;
-                }
-
-                // Get sender profile
-                const senderProfile =
-                    session.learnerId === userId
-                        ? session.learner.profile
-                        : session.helper.profile;
-
-                // Broadcast message to all users in the session room
-                const messageData = {
-                    id: Date.now().toString(), // Simple ID for demo
+                // 3. Construct Message Object (In Memory)
+                const messageObj = {
+                    id: Date.now().toString(), // Temporary ID
                     sessionId,
-                    userId,
-                    userName: senderProfile?.name || 'Anonymous',
-                    message,
-                    timestamp: new Date().toISOString(),
+                    senderId: userId,
+                    content: message,
+                    createdAt: new Date(),
+                    sender: {
+                        id: sender.id,
+                        name: sender.profile?.name || 'User',
+                    }
                 };
 
-                io.to(sessionId).emit('new-message', messageData);
+                // 4. Save to Memory Store
+                messageStore.addMessage(sessionId, messageObj);
+
+                // 5. Broadcast
+                io.to(sessionId).emit('new-message', messageObj);
+
             } catch (error) {
                 console.error('Error sending message:', error);
                 socket.emit('error', { message: 'Failed to send message' });
             }
         });
 
-        /**
-         * Leave a session room
-         */
-        socket.on('leave-session', (sessionId: string) => {
-            socket.leave(sessionId);
-            console.log(`User ${userId} left session ${sessionId}`);
-        });
-
-        /**
-         * Disconnect handler
-         */
         socket.on('disconnect', () => {
             console.log(`User disconnected: ${userId}`);
         });

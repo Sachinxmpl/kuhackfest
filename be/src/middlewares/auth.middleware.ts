@@ -13,19 +13,15 @@ export const authenticate = (
     next: NextFunction
 ): void => {
     try {
-        const authHeader = req.headers.authorization;
+        const token = req.headers.authorization;
 
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        if (!token) {
             throw new UnauthorizedError('No token provided');
-        }
-        console.log("middlewareeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
+        }   
 
-        const token = authHeader.substring(7);
         const decoded = verifyToken(token);
 
         req.user = decoded;
-        console.log("________________________")
-        console.log(req.user)
 
         next();
     } catch (error) {

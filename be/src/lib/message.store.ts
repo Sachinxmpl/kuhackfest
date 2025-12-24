@@ -1,5 +1,3 @@
-// lib/message.store.ts
-
 export interface InMemoryMessage {
     id: string;
     sessionId: string;
@@ -9,7 +7,6 @@ export interface InMemoryMessage {
     sender: {
         name: string;
         id: string;
-        // Add avatar if you have it in profile
     };
 }
 
