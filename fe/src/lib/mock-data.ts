@@ -198,3 +198,34 @@ export const mockSession: Session = {
   helper: mockUsers[0],
   ratings: [],
 };
+
+export const INTERESTS = [
+  'Mathematics',
+  'Physics',
+  'Chemistry',
+  'Biology',
+  'Computer Science',
+  'Engineering',
+  'Economics',
+  'Literature',
+  'History',
+  'Psychology',
+  'Philosophy',
+  'Languages',
+];
+
+
+export const SKILLS = [
+  'Problem Solving',
+  'Critical Thinking',
+  'Communication',
+  'Teamwork',
+  'Leadership',
+  'Time Management',
+  'Research',
+  'Data Analysis',
+  'Public Speaking',
+  'Writing',
+  'Programming',
+  'Project Management',
+];
