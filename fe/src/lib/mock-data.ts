@@ -1,6 +1,34 @@
 // Mock data for development
 import { User, UserProfile, HelperStats, Beacon, BeaconApplication, Session, Rating, BeaconType, BeaconStatus, SessionStatus } from './types';
 
+// Topic options for filters
+export const topicOptions = [
+  'Web Development',
+  'Mobile Development',
+  'Data Science',
+  'Machine Learning',
+  'Cloud Computing',
+  'DevOps',
+  'Cybersecurity',
+  'Mathematics',
+  'Physics',
+  'Chemistry',
+  'Biology',
+  'English Literature',
+  'History',
+  'Economics',
+  'Psychology',
+];
+
+// Duration options for urgent beacons
+export const urgentDurations = [
+  { label: '30 minutes', value: 30 },
+  { label: '1 hour', value: 60 },
+  { label: '2 hours', value: 120 },
+  { label: '4 hours', value: 240 },
+  { label: '8 hours', value: 480 },
+];
+
 // Mock users
 export const mockUsers: User[] = [
   {

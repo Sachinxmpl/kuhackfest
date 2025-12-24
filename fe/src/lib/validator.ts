@@ -1,5 +1,6 @@
 // Zod schemas for form validation
 import { z } from 'zod';
+import { BeaconStatus, BeaconType } from './types';
 
 // Auth schemas
 export const loginSchema = z.object({
@@ -29,9 +30,9 @@ export const profileSchema = z.object({
 
 // Profile Details schema
 export const profileDetailsSchema = z.object({
-    studyLevel: z.enum(['High School', 'Undergraduate', 'Postgraduate', 'PhD', 'Professional'], {
-        errorMap: () => ({ message: 'Please select a study level' })
-    }),
+    studyLevel: z.enum(
+        ['High School', 'Undergraduate', 'Postgraduate', 'PhD', 'Professional'],
+       ),
     academicStream: z.string().min(2, 'Academic stream is required'),
     gpa: z.string().regex(/^\d(\.\d{1,2})?$/, 'Please enter a valid GPA'),
     about: z.string().min(20, 'About section must be at least 20 characters').max(1000, 'About section must be less than 1000 characters'),
@@ -45,8 +46,8 @@ export const profileDetailsSchema = z.object({
 export const beaconSchema = z.object({
     title: z.string().min(5, 'Title must be at least 5 characters').max(100, 'Title must be less than 100 characters'),
     description: z.string().min(10, 'Description must be at least 10 characters').max(1000, 'Description must be less than 1000 characters'),
-    topic: z.string().min(2, 'Please select a topic'),
-    type: z.enum(['Normal', 'Urgent']),
+    type: z.enum(BeaconType),
+    status: z.enum(BeaconStatus),
     urgentDuration: z.number().optional(),
 });
 

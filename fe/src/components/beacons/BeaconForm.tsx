@@ -3,7 +3,7 @@
 
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod";
-import { beaconSchema, type BeaconFormData } from '@/lib/validators';
+import { beaconSchema, type BeaconFormData } from '@/lib/validator';
 import { topicOptions, urgentDurations } from '@/lib/mock-data';
 import Input from '@/components/ui/Input';
 import Textarea from '@/components/ui/Textarea';

@@ -1,11 +1,13 @@
 // BeaconCard component
+'use client';
+
 import { Beacon } from '@/lib/types';
 import { formatRelativeTime, truncate } from '@/lib/utils';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import CountdownTimer from './CountdownTimer';
 import { AlertCircle, User } from 'lucide-react';
-import Image from 'next/image';
+import { useState, useEffect } from 'react';
 
 export interface BeaconCardProps {
     beacon: Beacon;
@@ -14,6 +16,12 @@ export interface BeaconCardProps {
 }
 
 export default function BeaconCard({ beacon, onApply, onView }: BeaconCardProps) {
+    const [relativeTime, setRelativeTime] = useState<string>('');
+
+    useEffect(() => {
+        setRelativeTime(formatRelativeTime(beacon.createdAt));
+    }, [beacon.createdAt]);
+
     const isUrgent = beacon.type === 'Urgent';
 
     return (
@@ -51,22 +59,19 @@ export default function BeaconCard({ beacon, onApply, onView }: BeaconCardProps)
 
             {/* Owner info */}
             <div className="flex items-center gap-2 mb-4 pb-4 border-b border-zinc-200">
-                <div className="relative w-6 h-6 rounded-full overflow-hidden bg-zinc-100 flex-shrink-0">
-                    {beacon.owner.avatar ? (
-                        <Image
-                            src={beacon.owner.avatar}
-                            alt={beacon.owner.name}
-                            fill
-                            className="object-cover"
-                        />
+                <div className="relative w-6 h-6 rounded-full overflow-hidden bg-zinc-100 flex-shrink-0 flex items-center justify-center">
+                    {beacon.creator?.profile?.name ? (
+                        <span className="text-xs font-medium text-zinc-600">
+                            {beacon.creator.profile.name.charAt(0).toUpperCase()}
+                        </span>
                     ) : (
-                        <User className="w-6 h-6 p-1 text-zinc-600" />
+                        <User className="w-4 h-4 text-zinc-600" />
                     )}
                 </div>
-                <span className="text-sm text-zinc-600">{beacon.owner.name}</span>
+                <span className="text-sm text-zinc-600">{beacon.creator?.profile?.name || 'Anonymous'}</span>
                 <span className="text-sm text-zinc-400">•</span>
                 <span className="text-sm text-zinc-500">
-                    {formatRelativeTime(beacon.createdAt)}
+                    {relativeTime || 'just now'}
                 </span>
             </div>
 
@@ -76,7 +81,7 @@ export default function BeaconCard({ beacon, onApply, onView }: BeaconCardProps)
                     <CountdownTimer targetDate={beacon.expiresAt} />
                 ) : (
                     <div className="text-sm text-zinc-500">
-                        {beacon.applicants.length} applicant{beacon.applicants.length !== 1 ? 's' : ''}
+                        {beacon.applications?.length || 0} applicant{(beacon.applications?.length || 0) !== 1 ? 's' : ''}
                     </div>
                 )}
 
