@@ -1,0 +1,144 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+enum RequestType {
+  EXPRESS  
+  FORUM
+}
+
+enum RequestStatus {
+  OPEN
+  CLAIMED
+  COMPLETED
+  EXPIRED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  clerkId       String    @unique // Auth provider ID
+  email         String    @unique
+  name          String
+  avatarUrl     String?
+  bio           String?   // "Teaching Approach"
+  
+  // --- GAMIFICATION & STATS ---
+  impactPoints  Int       @default(0)
+  avgRating     Float     @default(0.0)
+  totalSessions Int       @default(0)
+  
+  // --- RELATIONS ---
+  badges        Badge[]
+  subjectStats  SubjectStat[] // Tracks proficiency per subject (e.g., OS Score)
+  
+  requests      HelpRequest[] @relation("LearnerRequests")
+  mentorSessions Session[]    @relation("MentorSessions")
+  learnerSessions Session[]   @relation("LearnerSessions")
+  messages      Message[]
+  applications  MentorApplication[]
+  
+  createdAt     DateTime  @default(now())
+}
+
+model SubjectStat {
+  id            String  @id @default(cuid())
+  userId        String
+  user          User    @relation(fields: [userId], references: [id])
+  subject       String  // e.g., "Operating Systems"
+  sessionCount  Int     @default(0)
+  ratingSum     Int     @default(0) // Used to calc average for this specific subject
+  isExpert      Boolean @default(false) // 🥈 Expert Badge Trigger
+  isMaster      Boolean @default(false) // 🥇 Master Badge Trigger
+
+  @@unique([userId, subject])
+}
+
+model Badge {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      String   // "OS_MASTER", "TOP_RATED", "LIGHTNING_RESPONDER"
+  awardedAt DateTime @default(now())
+}
+
+model HelpRequest {
+  id          String        @id @default(cuid())
+  type        RequestType
+  subject     String        // "Operating Systems", "Computer Networks"
+  topic       String        // "Semaphores"
+  details     String        @db.Text
+  status      RequestStatus @default(OPEN)
+  
+  learnerId   String
+  learner     User          @relation("LearnerRequests", fields: [learnerId], references: [id])
+  
+  expiresAt   DateTime?     // For Express Help (created_at + 20 mins)
+  applicants  MentorApplication[]
+  session     Session?
+  
+  createdAt   DateTime      @default(now())
+}
+
+// Tracks who clicked "I can help"
+model MentorApplication {
+  id          String      @id @default(cuid())
+  requestId   String
+  request     HelpRequest @relation(fields: [requestId], references: [id])
+  mentorId    String
+  mentor      User        @relation(fields: [mentorId], references: [id])
+  createdAt   DateTime    @default(now()) // Used for "Speed" calculation
+  
+  @@unique([requestId, mentorId])
+}
+
+model Session {
+  id          String    @id @default(cuid())
+  requestId   String    @unique
+  request     HelpRequest @relation(fields: [requestId], references: [id])
+  
+  mentorId    String
+  mentor      User      @relation("MentorSessions", fields: [mentorId], references: [id])
+  learnerId   String
+  learner     User      @relation("LearnerSessions", fields: [learnerId], references: [id])
+  
+  isActive    Boolean   @default(true)
+  meetLink    String?   // Google Meet URL
+  
+  messages    Message[]
+  review      Review?
+  
+  startedAt   DateTime  @default(now())
+  endedAt     DateTime?
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  sessionId String
+  session   Session  @relation(fields: [sessionId], references: [id])
+  senderId  String
+  sender    User     @relation(fields: [senderId], references: [id])
+  content   String   @db.Text
+  type      String   @default("TEXT") // TEXT, CODE, SYSTEM
+  createdAt DateTime @default(now())
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  sessionId String   @unique
+  session   Session  @relation(fields: [sessionId], references: [id])
+  rating    Int      // 1-5
+  comment   String?
+  createdAt DateTime @default(now())
+}
