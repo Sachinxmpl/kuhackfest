@@ -31,12 +31,11 @@ export const createApp = (): Application => {
 
     app.use('/api/auth', authRoutes);
     app.use('/api/users', usersRoutes);
-    app.use('/api/beacons', beaconsRoutes);
     app.use('/api', applicationsRoutes);    
+    app.use('/api/beacons', beaconsRoutes);
     app.use('/api/sessions', sessionsRoutes);
     app.use('/api/ratings', ratingsRoutes);
 
-    //route not found 
     app.use((req, res) => {
         res.status(404).json({
             success: false,
