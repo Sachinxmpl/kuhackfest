@@ -76,7 +76,7 @@ export default function ProfilePage() {
                     <div className="bg-white border border-zinc-200 rounded-lg p-6 shadow-sm">
                         <div className="flex items-start gap-6">
                             {/* Avatar */}
-                            <div className="relative w-24 h-24 rounded-full overflow-hidden bg-zinc-100 flex-shrink-0">
+                            <div className="relative w-24 h-24 rounded-full overflow-hidden bg-zinc-100 shrink-0">
                                     <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-zinc-600">
                                         {user?.profile?.name.charAt(0) || "User"}
                                     </div>

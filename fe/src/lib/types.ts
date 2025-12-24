@@ -33,7 +33,7 @@ export interface User {
   email: string;
   createdAt?: Date;
 
-  // components expect .name on the user object in places — keep it optional
+  // optional display name used in UI
   name?: string;
 
   profile?: UserProfile;
@@ -67,7 +67,8 @@ export interface Beacon {
   expiresAt?: Date;
 
   creatorId: string;
-  creator: User;
+  // make creator optional so mock data or API can omit it without type errors
+  creator?: User;
 
   applications?: BeaconApplication[];
   session?: Session;
@@ -91,8 +92,20 @@ export interface BeaconApplication {
 }
 
 /* =========================
-   MESSAGE
-   (added so Chat UI has a type to work with)
+   PARTICIPANT (UI list)
+   small cached participant info used by the left list
+========================= */
+
+export interface Participant {
+  userId: string;
+  role: 'learner' | 'helper' | 'both';
+  name?: string;
+  avatarUrl?: string;
+  online?: boolean;
+}
+
+/* =========================
+   MESSAGES & PREVIEWS
 ========================= */
 
 export interface Message {
@@ -101,6 +114,14 @@ export interface Message {
   senderId: string;
   content: string;
   timestamp: Date;
+}
+
+export interface LastMessage {
+  id: string;
+  senderId: string;
+  content: string;
+  timestamp: Date;
+  isSystem?: boolean;
 }
 
 /* =========================
@@ -125,7 +146,11 @@ export interface Session {
 
   ratings?: Rating[];
 
-  // messages for chat UI
+  // UI/list fields
+  participants?: Participant[]; // small participant list for left column
+  lastMessage?: LastMessage;    // preview for the list
+  unreadCount?: number;
+  // message history (optional — can be lazy-loaded)
   messages?: Message[];
 }
 
