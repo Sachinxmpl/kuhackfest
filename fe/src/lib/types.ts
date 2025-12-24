@@ -1,6 +1,11 @@
 /* =========================
    ENUMS
 ========================= */
+export enum ExperienceLevel {
+  BEGINNER = "Beginner",
+  INTERMEDIATE = "Intermediate",
+  ADVANCED = "Advanced",
+}
 
 export enum BeaconType {
   NORMAL = "NORMAL",

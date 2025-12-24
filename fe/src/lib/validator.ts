@@ -24,8 +24,6 @@ export const profileSchema = z.object({
     bio: z.string().max(500, 'Bio must be less than 500 characters').optional(),
     interests: z.array(z.string()).min(1, 'Select at least one interest'),
     skills: z.array(z.string()).min(1, 'Select at least one skill'),
-    availability: z.array(z.string()).min(1, 'Select at least one availability option'),
-    experienceLevel: z.enum(['Beginner', 'Intermediate', 'Advanced']),
 });
 
 // Profile Details schema
