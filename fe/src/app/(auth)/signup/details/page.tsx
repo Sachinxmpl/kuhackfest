@@ -188,7 +188,7 @@ export default function ProfileDetailsPage() {
                                 </label>
                                 <select
                                     {...register('academicStream')}
-                                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-900 transition ${
+                                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-900 transition text-zinc-900 ${
                                         errors.academicStream
                                             ? 'border-red-500'
                                             : 'border-zinc-300'
