@@ -27,6 +27,19 @@ export const profileSchema = z.object({
     experienceLevel: z.enum(['Beginner', 'Intermediate', 'Advanced']),
 });
 
+// Profile Details schema
+export const profileDetailsSchema = z.object({
+    studyLevel: z.enum(['High School', 'Undergraduate', 'Postgraduate', 'PhD', 'Professional'], {
+        errorMap: () => ({ message: 'Please select a study level' })
+    }),
+    academicStream: z.string().min(2, 'Academic stream is required'),
+    gpa: z.string().regex(/^\d(\.\d{1,2})?$/, 'Please enter a valid GPA'),
+    about: z.string().min(20, 'About section must be at least 20 characters').max(1000, 'About section must be less than 1000 characters'),
+    interests: z.array(z.string()).min(1, 'Select at least one interest'),
+    profileImage: z.instanceof(File).optional(),
+    academicStats: z.string().max(500, 'Academic stats must be less than 500 characters').optional(),
+});
+
 // Beacon schemas
 export const beaconSchema = z.object({
     title: z.string().min(5, 'Title must be at least 5 characters').max(100, 'Title must be less than 100 characters'),
@@ -51,6 +64,7 @@ export const ratingSchema = z.object({
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type SignupFormData = z.infer<typeof signupSchema>;
 export type ProfileFormData = z.infer<typeof profileSchema>;
+export type ProfileDetailsFormData = z.infer<typeof profileDetailsSchema>;
 export type BeaconFormData = z.infer<typeof beaconSchema>;
 export type ApplicationFormData = z.infer<typeof applicationSchema>;
 export type RatingFormData = z.infer<typeof ratingSchema>;

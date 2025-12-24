@@ -26,7 +26,7 @@ export default function SignupPage() {
         console.log('Signup data:', data);
 
         // Redirect to profile setup
-        router.push('/profile');
+        router.push('/signup/details');
     };
 
     return (
