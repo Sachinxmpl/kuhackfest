@@ -209,25 +209,7 @@ export default function ProfileDetailsPage() {
                             </div>
                         </div>
 
-                        {/* GPA and Stats */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <Input
-                                label="GPA / CGPA"
-                                type="text"
-                                placeholder="e.g., 3.8"
-                                error={errors.gpa?.message}
-                                {...register('gpa')}
-                            />
-                            <div>
-                                <Textarea
-                                    label="Academic Stats"
-                                    placeholder="e.g., Topper in 2023, Scholarships received..."
-                                    error={errors.academicStats?.message}
-                                    {...register('academicStats')}
-                                    rows={3}
-                                />
-                            </div>
-                        </div>
+                        
 
                         {/* Interests */}
                         <div>
