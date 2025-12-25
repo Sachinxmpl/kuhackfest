@@ -3,7 +3,6 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { profileDetailsSchema, type ProfileDetailsFormData } from '@/lib/validator';
-import Input from '@/components/ui/Input';
 import Textarea from '@/components/ui/Textarea';
 import Button from '@/components/ui/Button';
 import { useRouter } from 'next/navigation';
@@ -13,6 +12,7 @@ import { INTERESTS, SKILLS, ACADEMIC_STREAMS } from "@/lib/mock-data"
 import { API_BASE_URL } from '@/constants/constants';
 import { useUser } from '@/contexts/UserContext';
 import { User } from '@/lib/types';
+import Image from 'next/image';
 
 export default function ProfileDetailsPage() {
     const router = useRouter();
@@ -27,7 +27,6 @@ export default function ProfileDetailsPage() {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
-        watch,
         setValue,
     } = useForm<ProfileDetailsFormData>({
         resolver: zodResolver(profileDetailsSchema),
@@ -36,8 +35,6 @@ export default function ProfileDetailsPage() {
             skills: [],
         },
     });
-
-    const profileImage = watch('profileImage');
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -150,11 +147,14 @@ export default function ProfileDetailsPage() {
                             <label htmlFor="profileImage" className="cursor-pointer">
                                 {imagePreview ? (
                                     <div className="flex flex-col items-center">
-                                        <img
-                                            src={imagePreview}
-                                            alt="Preview"
-                                            className="w-32 h-32 rounded-full object-cover mb-4"
-                                        />
+                                        <div className='size-32 relative rounded-full mb-4'>
+                                            <Image
+                                                src={imagePreview}
+                                                fill
+                                                alt="Preview"
+                                                className="object-cover"
+                                            />
+                                        </div>
                                         <p className="text-sm text-zinc-600">
                                             Click to change image
                                         </p>

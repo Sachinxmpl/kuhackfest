@@ -8,7 +8,7 @@ export default function useRelativeTime(timestamp?: string | number | Date | nul
 
   useEffect(() => {
     if (!timestamp) {
-      setLabel('');
+      queueMicrotask(() => setLabel(''));
       return;
     }
 
@@ -37,7 +37,7 @@ export default function useRelativeTime(timestamp?: string | number | Date | nul
     };
 
     // set immediately in browser
-    setLabel(getLabel());
+    queueMicrotask(() => setLabel(getLabel()));
 
     // choose interval frequency based on age (updates per minute for recent messages)
     const intervalMs = (() => {

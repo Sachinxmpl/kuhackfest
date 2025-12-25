@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { mockBeacons } from '@/lib/mock-data';
-import { Beacon, BeaconStatus, BeaconType, User } from '@/lib/types';
+import { Beacon, BeaconType } from '@/lib/types';
 import { BeaconFormData } from '@/lib/validator';
 import BeaconCard from '@/components/beacon/BeaconCard';
 import BeaconFilter from '@/components/beacon/BeaconFilter';
@@ -10,7 +9,6 @@ import BeaconForm from '@/components/beacon/BeaconForm';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
 import { Plus, Lightbulb } from 'lucide-react';
-import { generateId } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { API_BASE_URL } from '@/constants/constants';
 
@@ -53,11 +51,12 @@ export default function DashboardPage() {
                 setBeacons(beacons);
             } catch (e) {
                 console.error("Failed to fetch beacons.")
+                console.error(e);
             }
         }
 
         getAllBeacons();
-    }, []);
+    }, [token]);
 
     // Filter beacons
     const filteredBeacons = useMemo(() => {

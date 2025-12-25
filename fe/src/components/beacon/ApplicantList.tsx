@@ -4,7 +4,7 @@ import { BeaconApplication, User } from '@/lib/types';
 import ProfileCard from '@/components/profile/ProfileCard';
 import Button from '@/components/ui/Button';
 import { formatRelativeTime } from '@/lib/utils';
-import { CheckCircle, Clock } from 'lucide-react';
+import { Clock } from 'lucide-react';
 
 export interface ApplicantListProps {
     applications: BeaconApplication[];
@@ -15,7 +15,7 @@ export interface ApplicantListProps {
 
 export default function ApplicantList({
     applications,
-    selectedHelperId,
+    selectedHelperId: _,
     onSelectHelper,
     isOwner,    
 }: ApplicantListProps) {

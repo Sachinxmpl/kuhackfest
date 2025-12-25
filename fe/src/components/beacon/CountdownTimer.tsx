@@ -14,8 +14,8 @@ export default function CountdownTimer({ targetDate, onExpire }: CountdownTimerP
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        setMounted(true);
-        
+        queueMicrotask(() => setMounted(true));
+
         const timer = setInterval(() => {
             const remaining = getTimeRemaining(new Date(targetDate));
             setTimeRemaining(remaining);

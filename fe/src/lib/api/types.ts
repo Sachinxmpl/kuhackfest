@@ -189,6 +189,7 @@ export interface CreateRatingRequest {
 // API RESPONSE WRAPPERS
 // ============================================================================
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface ApiSuccessResponse<T = any> {
     success: true;
     data: T;
@@ -200,6 +201,7 @@ export interface ApiErrorResponse {
     error: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ApiResponse<T = any> = ApiSuccessResponse<T> | ApiErrorResponse;
 
 // ============================================================================

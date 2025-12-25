@@ -168,15 +168,6 @@ export const mockSessions: Session[] = [
       creatorId: 'u1',
       creator: currentUser,
     },
-    participants: [pAlex, pSam],
-    lastMessage: {
-      id: 'm1',
-      senderId: 'u2',
-      content: 'Sure — join in 5 mins',
-      timestamp: new Date(Date.now() - 1000 * 60 * 5),
-    } as LastMessage,
-    unreadCount: 2,
-    messages: messagesForS1,
   },
 
   {
@@ -196,15 +187,6 @@ export const mockSessions: Session[] = [
       creatorId: 'u3',
       creator: userJordan,
     },
-    participants: [pJordan, pAlex],
-    lastMessage: {
-      id: 'm10',
-      senderId: 'u3',
-      content: "Can you review my generic constraint?",
-      timestamp: new Date(Date.now() - 1000 * 60 * 30),
-    } as LastMessage,
-    unreadCount: 0,
-    messages: messagesForS2,
   },
 ];
 

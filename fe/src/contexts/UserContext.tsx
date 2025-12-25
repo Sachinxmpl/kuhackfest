@@ -56,7 +56,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             if (!ignoredRoutes.includes(pathname))
                 router.push("/login")
         }
-    }, [])
+    }, [pathname, router, token]);
 
     return (
         <UserContext.Provider value={{ user, setUser, currentSession, setCurrentSession }}>

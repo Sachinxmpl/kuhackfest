@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import type { Session, Message } from '@/lib/types';
+import type { Session } from '@/lib/types';
 import MessageBubble from './MessageBubble';
 import Button from '@/components/ui/Button';
 import { Send, AlertCircle } from 'lucide-react';

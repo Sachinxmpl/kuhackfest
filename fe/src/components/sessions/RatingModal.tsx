@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ratingSchema, type RatingFormData } from '@/lib/validator';
 import Modal from '@/components/ui/Modal';
@@ -24,14 +24,14 @@ export default function RatingModal({ isOpen, onClose, recipientName, onSubmit }
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<RatingFormData>({
     resolver: zodResolver(ratingSchema),
     defaultValues: { stars: 0 },
   });
 
-  const selectedStars = watch('stars');
+  const selectedStars = useWatch({ control, name: "stars" });
 
   const handleStarClick = (rating: number) => setValue('stars', rating, { shouldValidate: true });
 

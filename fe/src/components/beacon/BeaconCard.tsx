@@ -21,8 +21,8 @@ export default function BeaconCard({ beacon, onApply, onView }: BeaconCardProps)
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        setMounted(true);
-        setRelativeTime(formatRelativeTime(beacon.createdAt));
+        queueMicrotask(() => setMounted(true));
+        queueMicrotask(() => setRelativeTime(formatRelativeTime(beacon.createdAt)));
     }, [beacon.createdAt]);
 
     const isUrgent = beacon.type === BeaconType.URGENT;

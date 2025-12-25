@@ -215,6 +215,6 @@ export type CreateRatingFormData = z.infer<typeof createRatingSchema>;
 export function stripFrontendOnlyFields(
     data: ExtendedProfileFormData
 ): UpdateProfileFormData {
-    const { studyLevel, academicStream, availability, experienceLevel, ...backendData } = data;
+    const { studyLevel: _studyLevel, academicStream: _academicStream, availability: _availability, experienceLevel: _expLevel, ...backendData } = data;
     return backendData;
 }

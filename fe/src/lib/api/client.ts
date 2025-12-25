@@ -38,6 +38,7 @@ export class ApiError extends Error {
     constructor(
         message: string,
         public status: number,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         public response?: any
     ) {
         super(message);
@@ -171,6 +172,7 @@ export const beaconsApi = {
      * GET /beacons
      */
     getBeacons: async (params?: BeaconQueryParams): Promise<BeaconWithCreator[]> => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const query = params ? '?' + new URLSearchParams(params as any).toString() : '';
         return fetchApi<BeaconWithCreator[]>(`/beacons${query}`);
     },

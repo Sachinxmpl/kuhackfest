@@ -8,7 +8,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import api, { tokenManager, ApiError } from './client';
 import type {
-    AuthResponse,
     CurrentUserResponse,
     BeaconWithCreator,
     BeaconWithApplications,
@@ -353,7 +352,8 @@ export function useApiQuery<T>(
         } finally {
             setLoading(false);
         }
-    }, deps);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [...deps, queryFn]);
 
     useEffect(() => {
         execute();

@@ -2,7 +2,6 @@
 
 import { Session } from '@/lib/types';
 import Button from '@/components/ui/Button';
-import { currentUser } from '@/lib/mock-data';
 import { User2 } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 
@@ -15,9 +14,6 @@ export default function SessionHeader({ session, onEndSession }: SessionHeaderPr
   const { user } = useUser()
 
   const other = session?.helper?.id === user?.id ? session.learner : session.helper
-
-  const isHelper = user?.id === session.helperId;
-  const actionLabel = isHelper ? 'End Session' : 'Request Help';
 
   return (
     <div className="flex items-center justify-between p-4 border-b bg-white">

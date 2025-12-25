@@ -15,7 +15,7 @@ export default function SessionLayout({
     const { setCurrentSession } = useUser();
 
     const [sessions, setSessions] = useState<Session[]>();
-    const [sessionFetchError, setSessionFetchError] = useState<string | null>(null);
+    const [_sessionFetchError, setSessionFetchError] = useState<string | null>(null);
     const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
 
 

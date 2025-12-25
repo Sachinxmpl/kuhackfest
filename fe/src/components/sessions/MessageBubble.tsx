@@ -1,4 +1,3 @@
-import { Message } from '@/lib/types';
 import useRelativeTime from '@/lib/hooks/useRelativeTime';
 import { ChatMessage } from '@/lib/api';
 

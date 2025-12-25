@@ -2,7 +2,7 @@
 import { User } from '@/lib/types';
 import { formatRating } from '@/lib/utils';
 import Badge from '@/components/ui/Badge';
-import { Award, Star, Users } from 'lucide-react';
+import { Award, Star } from 'lucide-react';
 
 export interface ProfileCardProps {
     user: User;

@@ -2,9 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { use, useState, useEffect } from "react"
-import { mockBeacons, currentUser } from '@/lib/mock-data';
 import { ApplicationFormData } from '@/lib/validator';
-import { generateId } from '@/lib/utils';
 import ApplicationForm from '@/components/beacon/ApplicationForm';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
@@ -18,8 +16,8 @@ export default function ApplyPage({ params }: { params: Promise<{ id: string }> 
     const { id: beaconId } = use(params);
 
     const [beacon, setBeacon] = useState<Beacon | null>(null);
-    const [beaconFetchError, setBeaconFetchError] = useState<string | null>(null);
-    const [beaconApplyError, setBeaconApplyError] = useState<string | null>(null);
+    const [_beaconFetchError, setBeaconFetchError] = useState<string | null>(null);
+    const [_beaconApplyError, setBeaconApplyError] = useState<string | null>(null);
 
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 

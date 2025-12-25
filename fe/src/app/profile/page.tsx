@@ -9,7 +9,6 @@ import { INTERESTS, SKILLS } from '@/lib/mock-data';
 import { API_BASE_URL } from '@/constants/constants';
 import Input from '@/components/ui/Input';
 import Textarea from '@/components/ui/Textarea';
-import Button from '@/components/ui/Button';
 import TagInput from '@/components/profile/TagInput';
 import { Edit2, Save, X, Award, Star, BookOpen, Sparkles, User as UserIcon, Mail, TrendingUp } from 'lucide-react';
 import { formatRating } from '@/lib/utils';
@@ -17,8 +16,8 @@ import { useUser } from '@/contexts/UserContext';
 
 export default function ProfilePage() {
     const [isEditing, setIsEditing] = useState(false);
-    const [updateError, setUpdateError] = useState<string | null>(null);
-    const [updateSuccess, setUpdateSuccess] = useState(false);
+    const [_updateError, setUpdateError] = useState<string | null>(null);
+    const [_updateSuccess, setUpdateSuccess] = useState(false);
     const { user, setUser } = useUser();
 
     const getExperienceLevel = (helpCount: number = 0) => {

@@ -10,7 +10,7 @@ import ApplicantList from '@/components/beacon/ApplicantList';
 import ProfileCard from '@/components/profile/ProfileCard';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { Beacon, BeaconStatus, BeaconType, User } from '@/lib/types';
+import { Beacon, BeaconApplication, BeaconStatus, BeaconType, User } from '@/lib/types';
 import { API_BASE_URL } from '@/constants/constants';
 import { useUser } from '@/contexts/UserContext';
 
@@ -52,7 +52,7 @@ export default function BeaconDetailsPage({ params }: BeaconDetailsPageProps) {
                     ...result.data,
                     createdAt: new Date(result.data.createdAt),
                     expiresAt: result.data.expiresAt ? new Date(result.data.expiresAt) : null,
-                    applications: result.data.applications ? result.data.applications.map((app: any) => ({
+                    applications: result.data.applications ? result.data.applications.map((app: BeaconApplication) => ({
                         ...app,
                         appliedAt: new Date(app.appliedAt),
                     })) : [],

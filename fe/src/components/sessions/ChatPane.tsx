@@ -27,7 +27,7 @@ export default function ChatPane({
     setIsRatingOpen(true);
   };
 
-  const handleSubmitRating = async (data: any) => {
+  const handleSubmitRating = async () => {
     setIsRatingOpen(false);
   };
 
