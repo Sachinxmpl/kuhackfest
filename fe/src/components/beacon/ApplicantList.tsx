@@ -1,6 +1,6 @@
 'use client';
 
-import { BeaconApplication, User } from '@/lib/types';
+import { BeaconApplication, BeaconStatus, User } from '@/lib/types';
 import ProfileCard from '@/components/profile/ProfileCard';
 import Button from '@/components/ui/Button';
 import Badge from '../ui/Badge';
@@ -13,6 +13,7 @@ export interface ApplicantListProps {
     onSelectHelper: (helperId: string) => void;
     isOwner: boolean;
     matchesScore: { helperId: string; similarityScore: number; helperName?: string }[];
+    status: BeaconStatus
 }
 
 export default function ApplicantList({
@@ -21,6 +22,7 @@ export default function ApplicantList({
     onSelectHelper,
     isOwner,
     matchesScore,
+    status,
 }: ApplicantListProps) {
 
     const getBadgeVariant = (score: number) => {
@@ -118,6 +120,7 @@ export default function ApplicantList({
                             <Button
                                 size="sm"
                                 onClick={() => onSelectHelper(application.id)}
+                                disabled={status !== BeaconStatus.OPEN}
                             >
                                 Select Helper
                             </Button>

@@ -1,5 +1,5 @@
 'use client';
-import { Beacon, BeaconType } from '@/lib/types';
+import { Beacon, BeaconStatus, BeaconType } from '@/lib/types';
 import { formatRelativeTime, truncate } from '@/lib/utils';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
@@ -98,7 +98,7 @@ export default function BeaconCard({ beacon, onApply, onView }: BeaconCardProps)
                     size="sm"
                     onClick={() => onApply?.(beacon.id)}
                     variant={isUrgent ? 'primary' : 'outline'}
-                    disabled={isOwner}
+                    disabled={isOwner || beacon.status !== BeaconStatus.OPEN}
                 >
                     Apply to Help
                 </Button>

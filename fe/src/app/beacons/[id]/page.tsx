@@ -205,6 +205,7 @@ export default function BeaconDetailsPage({ params }: BeaconDetailsPageProps) {
                             onSelectHelper={handleSelectHelper}
                             isOwner={isOwner}
                             matchesScore={matches}
+                            status={beacon?.status as BeaconStatus}
                         />
                     </div>
                 )}

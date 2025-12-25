@@ -2,7 +2,7 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginFormData } from '@/lib/validator';
 import Input from '@/components/ui/Input';
@@ -18,6 +18,14 @@ export default function LoginPage() {
     const { setUser } = useUser();
 
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
+    useEffect(() => {
+        if (token) {
+            router.push('/dashboard');
+        }
+    }, [token, router]);
 
     const {
         register,

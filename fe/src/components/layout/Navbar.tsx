@@ -2,16 +2,17 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import { Lightbulb, User, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function Navbar() {
     const pathname = usePathname();
+    const router = useRouter();
 
     // Don't show navbar on auth pages or landing page
-    if (pathname === '/' || pathname==="/login" || pathname==="/signup") {
+    if (pathname === '/' || pathname === "/login" || pathname === "/signup") {
         return null;
     }
 
@@ -20,6 +21,11 @@ export default function Navbar() {
         { href: '/profile', label: 'Profile' },
         { href: '/sessions', label: 'Sessions' },
     ];
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        router.push('/');
+    }
 
     return (
         <nav className="bg-white border-b border-zinc-200 sticky top-0 z-40">
@@ -55,11 +61,9 @@ export default function Navbar() {
                                     <User className="w-4 h-4" />
                                 </Button>
                             </Link>
-                            <Link href="/">
-                                <Button size="sm" variant="ghost">
-                                    <LogOut className="w-4 h-4" />
-                                </Button>
-                            </Link>
+                            <Button onClick={handleLogout} size="sm" variant="ghost">
+                                <LogOut className="w-4 h-4" />
+                            </Button>
                         </div>
                     </div>
                 </div>
