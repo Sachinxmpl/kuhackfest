@@ -5,7 +5,7 @@ import { Router } from 'express';
 import { BeaconsController } from './beacons.controller.js';
 import { authenticate } from '../../middlewares/auth.middleware.js';
 import { validate } from '../../middlewares/validate.middleware.js';
-import { createBeaconSchema, updateBeaconSchema, beaconQuerySchema } from './beacons.schema.js';
+import { createBeaconSchema, updateBeaconSchema, beaconQuerySchema, beaconMatchesSchema } from './beacons.schema.js';
 
 const router = Router();
 const beaconsController = new BeaconsController();
@@ -34,6 +34,13 @@ router.patch(
     '/:id',
     validate(updateBeaconSchema),
     beaconsController.updateBeacon.bind(beaconsController)
+);
+
+
+router.get(
+    '/:id/matches', 
+    validate(beaconMatchesSchema),
+    beaconsController.getBeaconMatches.bind(beaconsController)
 );
 
 

@@ -4,6 +4,7 @@
 import { prisma } from '../../lib/prisma.js';
 import { NotFoundError, ForbiddenError } from '../../lib/errors.js';
 import type { CreateBeaconInput, UpdateBeaconInput, BeaconQueryInput } from './beacons.schema.js';
+import { aiService } from '../../utils/ai.js';
 
 export class BeaconsService {
     async createBeacon(userId: string, data: CreateBeaconInput) {
@@ -163,5 +164,87 @@ export class BeaconsService {
         });
 
         return { message: 'Beacon deleted successfully' };
+    }
+
+    /**
+     * Calculates match scores for all applicants of a specific beacon
+     */
+    async getBeaconMatches(id: string) {
+            // 1. Fetch Beacon, Creator Profile, and Applicants with their Profiles
+            const beacon = await prisma.beacon.findUnique({
+                where: { id },
+                include: {
+                    creator: {
+                        include: { profile: true }
+                    },
+                    applications: {
+                        include: {
+                            helper: {
+                                include: { profile: true, helperStats: true}
+                            }
+                        }
+                    }
+                }
+            });
+
+            if (!beacon) {
+                throw new NotFoundError('Beacon not found');
+            }
+
+            if (beacon.applications.length === 0) {
+                return []
+            }
+
+            // 2. Construct the "Anchor" text (The Need)
+            // We combine Beacon info + Creator's interests to form the requirement context
+            const creatorProfile = beacon.creator.profile;
+            const anchorText = `
+                Context: Help Request.
+                Title: ${beacon.title}.
+                Description: ${beacon.description}.
+                Creator Interests: ${creatorProfile?.interests.join(', ') || ''}.
+            `.trim();
+
+            // 3. Generate Embedding for the Anchor (The Beacon/Creator)
+            const anchorEmbedding = await aiService.getEmbedding(anchorText);
+
+            // 4. Iterate through applicants (Helpers) and calculate scores
+            const matchResults = await Promise.all(
+                beacon.applications.map(async (app) => {
+                    const helper = app.helper;
+                    const hProfile = helper.profile;
+
+                    // If helper has no profile, score is low/zero
+                    if (!hProfile) {
+                        return { helperId: helper.id, similarityScore: 0 };
+                    }
+
+                    // Construct Helper text (The Capability)
+                    const helperText = `
+                        Context: Helper/Mentor Profile.
+                        Bio: ${hProfile.bio || ''}.
+                        Skills: ${hProfile.skills.join(', ') || ''}.
+                        Interests: ${hProfile.interests.join(', ') || ''}.
+                        Messages: ${app.message || ''}.
+                    `.trim();
+
+                    // Generate embedding for Helper
+                    const helperEmbedding = await aiService.getEmbedding(helperText);
+
+                    // Calculate Cosine Similarity
+                    const score = aiService.calculateScore(anchorEmbedding || [], helperEmbedding || []);
+
+                    return {
+                        helperId: helper.id,
+                        helperName: hProfile.name, // Nice to have in response
+                        similarityScore: score
+                    };
+                })
+            );
+
+            // 5. Sort by highest score first
+            matchResults.sort((a, b) => b.similarityScore - a.similarityScore);
+
+            return matchResults;
     }
 }

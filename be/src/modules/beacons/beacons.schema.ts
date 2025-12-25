@@ -24,6 +24,14 @@ export const beaconQuerySchema = z.object({
     }),
 });
 
+export const beaconMatchesSchema = z.object({
+    params: z.object({
+        id: z.string(),
+    }),
+});
+
+
 export type CreateBeaconInput = z.infer<typeof createBeaconSchema>['body'];
 export type UpdateBeaconInput = z.infer<typeof updateBeaconSchema>['body'];
 export type BeaconQueryInput = z.infer<typeof beaconQuerySchema>['query'];
+export type BeaconMatchesInput = z.infer<typeof beaconMatchesSchema>['params'];

@@ -7,7 +7,6 @@ const openai = new OpenAI({
 });
 
 export const aiService = {
- 
   async getEmbedding(text: string): Promise<number[] | null> {
     // Remove newlines to ensure better vectorization
     const cleanText = text.replace(/\n/g, ' ');

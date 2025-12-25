@@ -79,4 +79,19 @@ export class BeaconsController {
             next(error);
         }
     }
+
+    /**
+     * GET /beacons/:id/matches
+     * Get match scores for all applicants of a specific beacon
+     */
+    async getBeaconMatches(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { id } = req.params;
+            if (!id) throw new Error('id is required');
+            const matches = await beaconsService.getBeaconMatches(id);
+            sendSuccess(res, matches);
+        } catch (error) {
+            next(error);
+        }
+    }
 }
