@@ -14,7 +14,7 @@ export default function Home() {
               <Lightbulb className="w-10 h-10 text-white" />
             </div>
             <h1 className="text-5xl font-bold text-zinc-900 mb-6">
-              Study Beacon
+              Study Match
             </h1>
             <p className="text-xl text-zinc-600 mb-8">
               Connect with peers to share knowledge and accelerate learning.
@@ -108,7 +108,7 @@ export default function Home() {
               Ready to start learning together?
             </h2>
             <p className="text-xl text-zinc-300 mb-8">
-              Join Study Beacon today and become part of a collaborative learning community.
+              Join Study Match today and become part of a collaborative learning community.
             </p>
             <Link href="/signup">
               <Button size="lg" variant="secondary">
@@ -122,7 +122,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-zinc-200 py-8">
         <div className="max-w-7xl mx-auto px-4 text-center text-sm text-zinc-600">
-          <p>&copy; {new Date().getFullYear()} Study Beacon. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Study Match. All rights reserved.</p>
         </div>
       </footer>
     </div>

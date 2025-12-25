@@ -65,7 +65,7 @@ export default function SignupPage() {
                         <UserPlus className="w-6 h-6 text-white" />
                     </div>
                     <h1 className="text-3xl font-bold text-zinc-900 mb-2">Create an account</h1>
-                    <p className="text-zinc-600">Join Study Beacon and start learning together</p>
+                    <p className="text-zinc-600">Join Study Match and start learning together</p>
                 </div>
 
                 <div className="bg-white border border-zinc-200 rounded-lg p-8 shadow-sm">

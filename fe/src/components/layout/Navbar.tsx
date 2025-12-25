@@ -30,7 +30,7 @@ export default function Navbar() {
                         <div className="w-8 h-8 bg-zinc-900 rounded-full flex items-center justify-center">
                             <Lightbulb className="w-5 h-5 text-white" />
                         </div>
-                        Study Beacon
+                        Study Match
                     </Link>
 
                     {/* Nav links */}

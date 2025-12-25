@@ -65,7 +65,7 @@ export default function LoginPage() {
                         <LogIn className="w-6 h-6 text-white" />
                     </div>
                     <h1 className="text-3xl font-bold text-zinc-900 mb-2">Welcome back</h1>
-                    <p className="text-zinc-600">Sign in to your Study Beacon account</p>
+                    <p className="text-zinc-600">Sign in to your Study Match account</p>
                 </div>
 
                 <div className="bg-white border border-zinc-200 rounded-lg p-8 shadow-sm">

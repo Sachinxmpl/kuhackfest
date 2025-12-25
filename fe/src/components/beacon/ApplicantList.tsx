@@ -3,6 +3,7 @@
 import { BeaconApplication, User } from '@/lib/types';
 import ProfileCard from '@/components/profile/ProfileCard';
 import Button from '@/components/ui/Button';
+import Badge from '../ui/Badge';
 import { formatRelativeTime } from '@/lib/utils';
 import { Clock } from 'lucide-react';
 
@@ -11,14 +12,23 @@ export interface ApplicantListProps {
     selectedHelperId?: string;
     onSelectHelper: (helperId: string) => void;
     isOwner: boolean;
+    matchesScore: { helperId: string; similarityScore: number; helperName?: string }[];
 }
 
 export default function ApplicantList({
     applications,
     selectedHelperId: _,
     onSelectHelper,
-    isOwner,    
+    isOwner,
+    matchesScore,
 }: ApplicantListProps) {
+
+    const getBadgeVariant = (score: number) => {
+        if (score >= 80) return 'success';
+        if (score >= 50) return 'info';
+        if (score >= 30) return 'warning';
+        return 'danger';
+    };
 
     if (applications.length === 0) {
         return (
@@ -34,12 +44,30 @@ export default function ApplicantList({
         );
     }
 
-    // Sort by experience score and rating
-    const sortedApplications = [...applications].sort((a, b) => {
-        const scoreA = (a.helper?.helperStats?.totalPoints || 0) + (a.helper?.helperStats?.avgRating || 0) * 100;
-        const scoreB = (b.helper?.helperStats?.totalPoints || 0) + (b.helper?.helperStats?.avgRating || 0) * 100;
-        return scoreB - scoreA;
-    });
+    // Sort by similarity score and helper stats
+    const sortedApplications = [...applications]
+        .map(app => {
+            const match = matchesScore.find(m => m.helperId === app.helperId);
+
+            const similarityScore = match?.similarityScore ?? 0;
+            const helperStats = app.helper?.helperStats;
+
+            const weightedScore =
+                (helperStats?.totalPoints ?? 0) +
+                (helperStats?.avgRating ?? 0) * 100;
+
+            return {
+                ...app,
+                similarityScore,
+                weightedScore,
+            };
+        })
+        .sort((a, b) => {
+            if (b.similarityScore !== a.similarityScore) {
+                return b.similarityScore - a.similarityScore;
+            }
+            return b.weightedScore - a.weightedScore;
+        });
 
     return (
         <div className="space-y-4">
@@ -48,15 +76,28 @@ export default function ApplicantList({
                     Applications ({applications.length})
                 </h3>
                 <p className="text-sm text-zinc-600">
-                    Sorted by experience and rating
+                    Sorted by similarity score and helper stats
                 </p>
             </div>
 
             {sortedApplications.map((application) => (
                 <div
                     key={application.id}
-                    className="bg-white border border-zinc-200 rounded-lg p-5 space-y-4"
+                    className="bg-white border border-zinc-200 rounded-lg p-5 space-y-4 relative"
                 >
+                    {/* Similarity Score Badge */}
+                    {application.similarityScore !== undefined && (
+                        <div className="absolute top-6 right-6">
+                            <Badge
+                                variant={getBadgeVariant(application.similarityScore)}
+                                size="sm"
+                            >
+                                Match score: {(application.similarityScore * 100).toFixed(1)}%
+                            </Badge>
+                        </div>
+                    )}
+
+                    {/* Helper Profile Card */}
                     <ProfileCard user={application.helper as User} showStats={true} />
 
                     {/* Application message */}

@@ -20,6 +20,12 @@ interface BeaconDetailsPageProps {
     }>;
 }
 
+interface MatchesScore {
+    helperId: string;
+    similarityScore: number;
+    helperName?: string;
+}
+
 export default function BeaconDetailsPage({ params }: BeaconDetailsPageProps) {
     const { id: beaconId } = use(params)
     const router = useRouter();
@@ -27,38 +33,52 @@ export default function BeaconDetailsPage({ params }: BeaconDetailsPageProps) {
 
     const [beacon, setBeacon] = useState<Beacon | null>(null);
     const [beaconFetchError, setBeaconFetchError] = useState<string | null>(null);
+    const [matches, setMatches] = useState<MatchesScore[]>([]);
 
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
     useEffect(() => {
         const getBeacon = async (id: string) => {
             try {
-                const response = await fetch(`${API_BASE_URL}/beacons/${id}`, {
+                const beaconsPromise = fetch(`${API_BASE_URL}/beacons/${id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': token as string,
                     },
-                });
+                }).then(res => res.json());
 
-                const result = await response.json();
+                const matchesPromise = fetch(`${API_BASE_URL}/beacons/${id}/matches`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token as string,
+                    },
+                }).then(res => res.json());
 
-                if (!result.success) {
-                    setBeaconFetchError(result.message || 'Failed to fetch beacon details.');
+                const [beaconResult, matchesResult] = await Promise.all([beaconsPromise, matchesPromise]);
+
+                if (!beaconResult.success) {
+                    setBeaconFetchError(beaconResult.message || 'Failed to fetch beacon details.');
+                    return;
+                } else if (!matchesResult.success) {
+                    setBeaconFetchError(matchesResult.message || 'Failed to fetch beacon matches.');
                     return;
                 }
 
                 const beacon = {
-                    ...result.data,
-                    createdAt: new Date(result.data.createdAt),
-                    expiresAt: result.data.expiresAt ? new Date(result.data.expiresAt) : null,
-                    applications: result.data.applications ? result.data.applications.map((app: BeaconApplication) => ({
+                    ...beaconResult.data,
+                    createdAt: new Date(beaconResult.data.createdAt),
+                    expiresAt: beaconResult.data.expiresAt ? new Date(beaconResult.data.expiresAt) : null,
+                    applications: beaconResult.data.applications ? beaconResult.data.applications.map((app: BeaconApplication) => ({
                         ...app,
                         appliedAt: new Date(app.appliedAt),
                     })) : [],
                 }
 
                 setBeacon(beacon as Beacon);
+                setMatches(matchesResult.data as MatchesScore[]);
+                console.log('Matches:', matchesResult);
             } catch (e) {
                 setBeaconFetchError('An error occurred while fetching beacon details.');
                 console.error(e);
@@ -184,6 +204,7 @@ export default function BeaconDetailsPage({ params }: BeaconDetailsPageProps) {
                             applications={beacon?.applications || []}
                             onSelectHelper={handleSelectHelper}
                             isOwner={isOwner}
+                            matchesScore={matches}
                         />
                     </div>
                 )}

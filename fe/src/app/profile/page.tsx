@@ -8,6 +8,7 @@ import { profileSchema, type ProfileFormData } from '@/lib/validator';
 import { INTERESTS, SKILLS } from '@/lib/mock-data';
 import { API_BASE_URL } from '@/constants/constants';
 import Input from '@/components/ui/Input';
+import Button from '@/components/ui/Button';
 import Textarea from '@/components/ui/Textarea';
 import TagInput from '@/components/profile/TagInput';
 import { Edit2, Save, X, Award, Star, BookOpen, Sparkles, User as UserIcon, Mail, TrendingUp } from 'lucide-react';
@@ -144,20 +145,14 @@ export default function ProfilePage() {
     );
 
     return (
-        <div className="min-h-screen bg-zinc-50">
+        <div className="bg-zinc-50">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
 
                 {/* Banner Container */}
                 <div className="bg-white rounded-xl border border-zinc-200 overflow-hidden mb-6 shadow-sm">
-                    {/* The colored background that the avatar overlaps */}
-                    <div className=" sm:h-25 from-zinc-900 via-zinc-800 to-zinc-900 relative">
-                        <div className="absolute inset-0 opacity-10">
-                            {/* Optional pattern */}
-                        </div>
-                    </div>
                     
-                    <div className="px-4 sm:px-6 pb-6">
-                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 -mt-16 sm:-mt-20">
+                    <div className="px-4 sm:px-6 py-6">
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                             {/* Left: Avatar and Info */}
                             <div className="flex flex-col sm:flex-row items-start gap-4">
                                 {/* Avatar */}
@@ -185,32 +180,32 @@ export default function ProfilePage() {
                             {/* Right: Edit Button */}
                             <div className="flex gap-2 sm:pt-12">
                                 {!isEditing ? (
-                                    <button 
+                                    <Button 
                                         onClick={() => setIsEditing(true)} 
-                                        className="w-full sm:w-auto cursor-pointer flex items-center justify-center gap-2 px-4 py-2 border border-zinc-300 rounded-lg bg-white hover:bg-zinc-50 text-zinc-900 font-medium transition-colors"
+                                        variant='outline'
                                     >
                                         <Edit2 className="w-4 h-4" />
                                         Edit Profile
-                                    </button>
+                                    </Button>
                                 ) : (
                                     <>
-                                        <button 
+                                        <Button 
                                             onClick={handleSubmit(onSubmit)} 
                                             disabled={isSubmitting}
-                                            className="flex-1 sm:flex-none cursor-pointer flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                            variant='primary'
                                         >
                                             <Save className="w-4 h-4" />
                                             {isSubmitting ? 'Saving...' : 'Save'}
-                                        </button>
-                                        <button
+                                        </Button>
+                                        <Button
                                             type="button"
                                             onClick={handleCancel}
                                             disabled={isSubmitting}
-                                            className="flex-1 sm:flex-none cursor-pointer flex items-center justify-center gap-2 px-4 py-2 border border-zinc-300 rounded-lg bg-white hover:bg-zinc-50 text-zinc-900 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                            variant='outline'
                                         >
                                             <X className="w-4 h-4" />
                                             Cancel
-                                        </button>
+                                        </Button>
                                     </>
                                 )}
                             </div>

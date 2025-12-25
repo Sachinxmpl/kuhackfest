@@ -142,7 +142,7 @@ export default function DashboardPage() {
                     <div>
                         <h1 className="text-3xl font-bold text-zinc-900 flex items-center gap-2">
                             <Lightbulb className="w-8 h-8" />
-                            Study Beacons
+                            Study Match
                         </h1>
                         <p className="text-zinc-600 mt-1">
                             Find help or offer your knowledge to others
