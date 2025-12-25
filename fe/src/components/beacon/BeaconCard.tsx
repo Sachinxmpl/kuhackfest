@@ -1,4 +1,3 @@
-// BeaconCard component
 'use client';
 import { Beacon, BeaconType } from '@/lib/types';
 import { formatRelativeTime, truncate } from '@/lib/utils';
@@ -7,6 +6,7 @@ import Button from '@/components/ui/Button';
 import CountdownTimer from './CountdownTimer';
 import { AlertCircle, User } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { useUser } from '@/contexts/UserContext';
 
 export interface BeaconCardProps {
     beacon: Beacon;
@@ -15,6 +15,8 @@ export interface BeaconCardProps {
 }
 
 export default function BeaconCard({ beacon, onApply, onView }: BeaconCardProps) {
+    const { user } = useUser();
+
     const [relativeTime, setRelativeTime] = useState<string>('');
     const [mounted, setMounted] = useState(false);
 
@@ -24,24 +26,29 @@ export default function BeaconCard({ beacon, onApply, onView }: BeaconCardProps)
     }, [beacon.createdAt]);
 
     const isUrgent = beacon.type === BeaconType.URGENT;
+    const isOwner = beacon.creatorId === user?.id;
 
     return (
         <div
-            className={`bg-white border rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow ${
-                isUrgent ? 'border-orange-200 bg-orange-50/30' : 'border-zinc-200'
-            }`}
+            className={`bg-white border rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow ${isUrgent ? 'border-orange-200 bg-orange-50/30' : 'border-zinc-200'
+                }`}
         >
             {/* Header */}
             <div className="flex items-start justify-between gap-3 mb-3">
                 <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="info">{beacon.status}</Badge>
-                        {isUrgent && (
-                            <Badge size="sm" variant="warning" className="gap-1">
-                                <AlertCircle className="w-3 h-3" />
-                                Urgent
-                            </Badge>
-                        )}
+                    <div className="flex justify-between items-center gap-2 mb-2">
+                        <div>
+                            <Badge variant="info">{beacon.status}</Badge>
+                            {isUrgent && (
+                                <Badge size="sm" variant="warning" className="gap-1">
+                                    <AlertCircle className="w-3 h-3" />
+                                    Urgent
+                                </Badge>
+                            )}
+                        </div>
+                        {isOwner &&
+                            <Badge className='self-end' variant="default">Your Request</Badge>
+                        }
                     </div>
                     <h3
                         className="text-lg font-semibold text-zinc-900 hover:text-zinc-700 cursor-pointer"
@@ -91,6 +98,7 @@ export default function BeaconCard({ beacon, onApply, onView }: BeaconCardProps)
                     size="sm"
                     onClick={() => onApply?.(beacon.id)}
                     variant={isUrgent ? 'primary' : 'outline'}
+                    disabled={isOwner}
                 >
                     Apply to Help
                 </Button>

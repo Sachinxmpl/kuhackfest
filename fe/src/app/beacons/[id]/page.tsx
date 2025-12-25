@@ -71,7 +71,6 @@ export default function BeaconDetailsPage({ params }: BeaconDetailsPageProps) {
     }, [beaconId, token])
 
     const isOwner = beacon?.creatorId == user?.id;
-    console.log("isowner:", isOwner);
     const isUrgent = beacon?.type === BeaconType.URGENT;
 
     const handleSelectHelper = async (applicationId: string) => {

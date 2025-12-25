@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import type { Session } from '@/lib/types';
 import Badge from '@/components/ui/Badge';
+import { User2 } from 'lucide-react';
 
 /**
  * Session list item — shows the "other" participant (name/avatar),
@@ -50,19 +51,16 @@ export default function SessionItem({
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left p-3 border-b flex items-center justify-between gap-3 hover:bg-zinc-50 ${
-        selected ? 'bg-zinc-100' : 'bg-white'
-      }`}
+      className={`w-full text-left p-3 border-b flex items-center justify-between gap-3 hover:bg-zinc-50 ${selected ? 'bg-zinc-100' : 'bg-white'
+        }`}
     >
       <div className="flex items-center gap-3 min-w-0">
-        <img
-          src={other?.avatarUrl ?? '/images/avatar-placeholder.png'}
-          alt={other?.name ?? 'Avatar'}
-          className="w-12 h-12 rounded-full object-cover"
-        />
+        <div className='rounded-full border border-gray-300'>
+          <User2 className='w-12 h-12 p-2 rounded-full object-cover text-gray-300' />
+        </div>
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <div className="font-medium truncate">{other?.name ?? title}</div>
+            <div className="font-medium truncate text-gray-700">{other?.name ?? title}</div>
             {timeRender}
           </div>
           <div className="text-xs text-zinc-500 truncate mt-1">{preview}</div>

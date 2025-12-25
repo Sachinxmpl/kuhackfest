@@ -1,6 +1,6 @@
 "use client"
 import { createContext, useContext, useState, useEffect } from "react";
-import { User } from "@/lib/types";
+import { Session, User } from "@/lib/types";
 import { API_BASE_URL } from "@/constants/constants";
 import { useRouter, usePathname } from "next/navigation";
 
@@ -9,6 +9,8 @@ const ignoredRoutes = ["/login", "/signup", "/"];
 interface UserContextType {
     user: User | null;
     setUser: React.Dispatch<React.SetStateAction<User | null>>;
+    currentSession: Session | null;
+    setCurrentSession: React.Dispatch<React.SetStateAction<Session | null>>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -18,6 +20,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
 
     const [user, setUser] = useState<User | null>(null);
+    const [currentSession, setCurrentSession] = useState<Session | null>(null);
 
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
@@ -49,11 +52,10 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             if (!ignoredRoutes.includes(pathname))
                 router.push("/login")
         }
-    }, [])
-
+    }, [pathname, router, token])
 
     return (
-        <UserContext.Provider value={{ user, setUser }}>
+        <UserContext.Provider value={{ user, setUser, currentSession, setCurrentSession }}>
             {children}
         </UserContext.Provider>
     );

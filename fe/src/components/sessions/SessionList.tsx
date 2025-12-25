@@ -15,14 +15,23 @@ export default function SessionList({
   return (
     <div className="h-full overflow-y-auto">
       <div className="p-4 border-b">
-        <h2 className="text-lg font-semibold">Sessions</h2>
-        <p className="text-xs text-zinc-500 mt-1">People you have active sessions with</p>
+        <h2 className="text-lg font-semibold text-black">Sessions</h2>
       </div>
 
       <div>
-        {sessions.map((s) => (
-          <SessionItem key={s.id} session={s} selected={s.id === selectedId} onClick={() => onSelect(s.id)} />
-        ))}
+        {sessions && sessions.length > 0 ? sessions.map((s) => (
+          <SessionItem
+            key={s.id}
+            session={s}
+            selected={s.id === selectedId}
+            onClick={() => onSelect(s.id)}
+          />
+        ))
+          : (
+            <div>
+              <p className="p-4 text-sm text-zinc-500">No sessions available.</p>
+            </div>
+          )}
       </div>
     </div>
   );

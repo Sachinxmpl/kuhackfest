@@ -27,8 +27,11 @@ export default function ChatPane({
   };
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-lg shadow-sm overflow-hidden">
-      <SessionHeader session={session} />
+    <div className="flex flex-col h-full bg-white shadow-sm overflow-hidden">
+      <SessionHeader
+        session={session}
+        onEndSession={handleEndSession}
+      />
 
       <div className="flex-1 p-4">
         <ChatWindow
@@ -44,15 +47,6 @@ export default function ChatPane({
         recipientName={otherParticipant?.name ?? 'Participant'}
         onSubmit={handleSubmitRating}
       />
-
-      <div className="p-4 border-t text-right">
-        <button
-          onClick={handleEndSession}
-          className="inline-flex items-center px-4 py-2 border rounded-md text-sm text-white bg-red-600 hover:bg-red-700"
-        >
-          End Session
-        </button>
-      </div>
     </div>
   );
 }

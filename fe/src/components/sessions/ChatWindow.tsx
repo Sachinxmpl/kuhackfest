@@ -78,7 +78,6 @@ export default function ChatWindow({ session, currentUserId, onSendMessage }: Ch
             <Send className="w-5 h-5" />
           </Button>
         </div>
-        <p className="text-xs text-zinc-500 mt-2">Press Enter to send, Shift + Enter for new line</p>
       </div>
     </div>
   );

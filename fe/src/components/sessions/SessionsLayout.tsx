@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import SessionList from './SessionList';
 import ChatPane from './ChatPane';
 import { mockSessions, currentUser } from '@/lib/mock-data';
 import type { Session } from '@/lib/types';
@@ -55,17 +54,17 @@ export default function SessionsLayout() {
       prev.map((s) =>
         s.id === sessionId
           ? {
-              ...s,
-              messages: [...(s.messages ?? []), newMessage],
-              lastMessage: {
-                id: newMessage.id,
-                senderId: newMessage.senderId,
-                content: newMessage.content,
-                timestamp: newMessage.timestamp,
-              },
-              // if the session isn't currently selected, increment unreadCount; else keep 0
-              unreadCount: s.id === selectedSessionId ? 0 : (s.unreadCount ?? 0) + 1,
-            }
+            ...s,
+            messages: [...(s.messages ?? []), newMessage],
+            lastMessage: {
+              id: newMessage.id,
+              senderId: newMessage.senderId,
+              content: newMessage.content,
+              timestamp: newMessage.timestamp,
+            },
+            // if the session isn't currently selected, increment unreadCount; else keep 0
+            unreadCount: s.id === selectedSessionId ? 0 : (s.unreadCount ?? 0) + 1,
+          }
           : s
       )
     );
@@ -74,21 +73,15 @@ export default function SessionsLayout() {
   const selectedSession = selectedSessionId ? sessionsById.get(selectedSessionId) ?? null : null;
 
   return (
-    <div className="flex h-screen bg-zinc-50">
-      <aside className="w-96 border-r bg-white">
-        <SessionList sessions={sessions} selectedId={selectedSessionId} onSelect={handleSelect} />
-      </aside>
-
-      <main className="flex-1 p-6">
-        {selectedSession ? (
-          <ChatPane session={selectedSession} onSendMessage={handleSendMessage} />
-        ) : (
-          <div className="h-full flex flex-col items-center justify-center text-zinc-400">
-            <p className="mb-2 font-medium">No conversation selected</p>
-            <p className="text-sm">Choose someone on the left to open their session</p>
-          </div>
-        )}
-      </main>
-    </div>
+    <main className="flex-1">
+      {selectedSession ? (
+        <ChatPane session={selectedSession} onSendMessage={handleSendMessage} />
+      ) : (
+        <div className="h-full flex flex-col items-center justify-center text-zinc-400">
+          <p className="mb-2 font-medium">No conversation selected</p>
+          <p className="text-sm">Choose someone on the left to open their session</p>
+        </div>
+      )}
+    </main>
   );
 }
