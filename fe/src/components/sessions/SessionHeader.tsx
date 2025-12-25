@@ -15,7 +15,6 @@ export default function SessionHeader({ session, onEndSession }: SessionHeaderPr
   const { user } = useUser()
 
   const other = session?.helper?.id === user?.id ? session.learner : session.helper
-  console.log('other', other);
 
   const isHelper = user?.id === session.helperId;
   const actionLabel = isHelper ? 'End Session' : 'Request Help';

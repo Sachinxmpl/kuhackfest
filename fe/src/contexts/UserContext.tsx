@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { Session, User } from "@/lib/types";
 import { API_BASE_URL } from "@/constants/constants";
 import { useRouter, usePathname } from "next/navigation";
+import { socketManager } from "@/lib/api";
 
 const ignoredRoutes = ["/login", "/signup", "/"];
 
@@ -48,11 +49,14 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         }
         if (token) {
             fetchUser();
+            if (!socketManager.isConnected()) {
+                socketManager.connect(token);
+            }
         } else {
             if (!ignoredRoutes.includes(pathname))
                 router.push("/login")
         }
-    }, [pathname, router, token])
+    }, [])
 
     return (
         <UserContext.Provider value={{ user, setUser, currentSession, setCurrentSession }}>

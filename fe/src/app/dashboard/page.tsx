@@ -38,7 +38,6 @@ export default function DashboardPage() {
                 });
 
                 const result = await response.json();
-                console.log(result)
 
                 if (!result.success) {
                     console.error("Failed to fetch beacons:", result.error);
@@ -119,7 +118,6 @@ export default function DashboardPage() {
                 createdAt: new Date(result.data.createdAt),
                 expiresAt: result.data.expiresAt ? new Date(result.data.expiresAt) : undefined,
             }
-            console.log(result)
 
             setIsCreateModalOpen(false);
             setBeacons([beacon, ...beacons]);

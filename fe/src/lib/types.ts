@@ -145,13 +145,6 @@ export interface Session {
   helper?: User;
 
   ratings?: Rating[];
-
-  // UI/list fields
-  participants?: Participant[]; // small participant list for left column
-  lastMessage?: LastMessage;    // preview for the list
-  unreadCount?: number;
-  // message history (optional — can be lazy-loaded)
-  messages?: Message[];
 }
 
 /* =========================

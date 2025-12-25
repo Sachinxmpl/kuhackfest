@@ -5,17 +5,19 @@ import type { Session, Message } from '@/lib/types';
 import MessageBubble from './MessageBubble';
 import Button from '@/components/ui/Button';
 import { Send, AlertCircle } from 'lucide-react';
+import { ChatMessage } from '@/lib/api';
 
 export interface ChatWindowProps {
   session: Session;
   currentUserId: string;
   onSendMessage?: (content: string) => void; // session id already bound by ChatPane
+  messages: ChatMessage[];
 }
 
-export default function ChatWindow({ session, currentUserId, onSendMessage }: ChatWindowProps) {
+export default function ChatWindow({ session, currentUserId, onSendMessage, messages }: ChatWindowProps) {
   // Do not keep a long-lived separate messages source that diverges.
   // Read messages from session.messages so they reflect the centralized store.
-  const messages = session.messages ?? [];
+  // const messages = session.messages ?? [];
 
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -51,12 +53,16 @@ export default function ChatWindow({ session, currentUserId, onSendMessage }: Ch
           </div>
         ) : (
           <>
-            {messages.map((message: Message) => {
+            {messages.map((message: ChatMessage) => {
               const isCurrentUser = message.senderId === currentUserId;
               const senderName = message.senderId === session.helperId ? session.helper?.name ?? 'Helper' : session.learner?.name ?? 'Learner';
 
               return (
-                <MessageBubble key={message.id} message={message} isCurrentUser={isCurrentUser} senderName={senderName} />
+                <MessageBubble
+                  key={message.id}
+                  message={message}
+                  isCurrentUser={isCurrentUser}
+                  senderName={senderName} />
               );
             })}
             <div ref={messagesEndRef} />

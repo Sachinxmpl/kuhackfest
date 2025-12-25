@@ -85,7 +85,6 @@ export default function BeaconDetailsPage({ params }: BeaconDetailsPageProps) {
             });
 
             const result = await response.json();
-            console.log("Select helper result:", result);
 
             if (!result.success) {
                 // Handle error

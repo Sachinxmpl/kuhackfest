@@ -1,29 +1,50 @@
 "use client"
 import ChatPane from "@/components/sessions/ChatPane";
 import { useUser } from "@/contexts/UserContext";
-
-// interface SessionChatPageProps {
-//     params: Promise<{
-//         sessionId: string;
-//     }>;
-// }
+import { ChatMessage, socketManager } from "@/lib/api";
+import { useState, useEffect } from "react";
 
 export default function SessionChatPage() {
-    const { currentSession } = useUser();
+    const { currentSession, user } = useUser();
 
-    const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+    const [messages, setMessages] = useState<ChatMessage[]>([])
+
+    useEffect(() => {
+        if (!currentSession?.id || !user?.id) return;
+
+        socketManager.joinSession(currentSession.id);
+
+        const handle = (msg: ChatMessage) => {
+            if (msg.sessionId === currentSession.id &&  msg.senderId !== user.id) {
+                setMessages(prev => [...prev, msg]);
+            }
+        };
+
+        socketManager.onNewMessage(handle);
+
+        return () => {
+            socketManager.leaveSession(currentSession.id);
+            socketManager.getSocket()?.off("new-message", handle);
+        };
+    }, [currentSession, user]);
 
     // onSendMessage updates only the session whose id matches
     const handleSendMessage = (sessionId: string, content: string) => {
         if (!content.trim()) return;
 
-        // const newMessage = {
-        //     id: generateId(),
-        //     sessionId,
-        //     senderId: currentUser.id,
-        //     content: content.trim(),
-        //     timestamp: new Date(),
-        // };
+        socketManager.sendMessage(sessionId, content);
+        
+        setMessages(prevMessages => [...prevMessages, {
+            id: Date.now().toString(), // Temporary ID
+            sessionId,
+            senderId: user?.id as string,
+            content: content.trim(),
+            createdAt: new Date(),
+            sender: {
+                id: user?.id as string,
+                name: user?.profile?.name as string,
+            },
+        }]);
     };
 
     return (
@@ -32,6 +53,7 @@ export default function SessionChatPage() {
                 <ChatPane
                     session={currentSession}
                     onSendMessage={handleSendMessage}
+                    messages={messages}
                 />
             ) : (
                 <div className="h-full flex flex-col items-center justify-center text-zinc-400">

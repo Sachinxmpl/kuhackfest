@@ -1,8 +1,9 @@
 import { Message } from '@/lib/types';
 import useRelativeTime from '@/lib/hooks/useRelativeTime';
+import { ChatMessage } from '@/lib/api';
 
 export interface MessageBubbleProps {
-  message: Message;
+  message: ChatMessage;
   isCurrentUser: boolean;
   senderName: string;
 }
@@ -13,7 +14,7 @@ export default function MessageBubble({
   senderName,
 }: MessageBubbleProps) {
   // compute relative time on client only
-  const timeLabel = useRelativeTime(message.timestamp);
+  const timeLabel = useRelativeTime(message.createdAt);
 
   // stable server-side placeholder to avoid hydration mismatch
   const timeRender = timeLabel ? (
