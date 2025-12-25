@@ -5,7 +5,7 @@ export const createBeaconSchema = z.object({
         title: z.string(),
         description: z.string(),
         type: z.enum(['NORMAL', 'URGENT']),
-        expiresInMinutes: z.number() // in minutes 
+        expiresInMinutes: z.number().optional() // in minutes 
     }),
 });
 

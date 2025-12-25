@@ -2,6 +2,7 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginFormData } from '@/lib/validator';
 import Input from '@/components/ui/Input';
@@ -9,9 +10,15 @@ import Button from '@/components/ui/Button';
 import Link from 'next/link';
 import { LogIn } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { API_BASE_URL } from '@/constants/constants';
+import { useUser } from '@/contexts/UserContext';
 
 export default function LoginPage() {
     const router = useRouter();
+    const { setUser } = useUser();
+
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
     const {
         register,
         handleSubmit,
@@ -21,12 +28,33 @@ export default function LoginPage() {
     });
 
     const onSubmit = async (data: LoginFormData) => {
-        // Mock login - simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        console.log('Login data:', data);
+        setErrorMessage(null);
+        try {
+            const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
 
-        // Redirect to dashboard
-        router.push('/dashboard');
+            const result = await response.json();
+
+            if (!result.success) {
+                setErrorMessage('Login failed. Please try again.');
+                return;
+            }
+
+            const token = result.data.token;
+            localStorage.setItem('token', token);
+            setUser(result.data.user);
+            console.log('Login successful:', result.data);
+            router.push('/dashboard');
+        } catch (e) {
+            console.error('Login failed:', e);
+            setErrorMessage('Login failed. Please try again later.');
+            return;
+        }
     };
 
     return (
@@ -57,6 +85,10 @@ export default function LoginPage() {
                             error={errors.password?.message}
                             {...register('password')}
                         />
+
+                        {errorMessage && (
+                            <p className="text-sm text-red-600">{errorMessage}</p>
+                        )}
 
                         <Button
                             type="submit"

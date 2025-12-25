@@ -10,13 +10,16 @@ export interface ApplicantListProps {
     applications: BeaconApplication[];
     selectedHelperId?: string;
     onSelectHelper: (helperId: string) => void;
+    isOwner: boolean;
 }
 
 export default function ApplicantList({
     applications,
     selectedHelperId,
     onSelectHelper,
+    isOwner,    
 }: ApplicantListProps) {
+
     if (applications.length === 0) {
         return (
             <div className="text-center py-12 bg-zinc-50 rounded-lg border border-zinc-200">
@@ -70,15 +73,10 @@ export default function ApplicantList({
                             Applied {formatRelativeTime(application.appliedAt)}
                         </span>
 
-                        {selectedHelperId === application.helperId ? (
-                            <div className="flex items-center gap-2 text-green-600 font-medium">
-                                <CheckCircle className="w-5 h-5" />
-                                Selected
-                            </div>
-                        ) : (
+                        {isOwner && (
                             <Button
                                 size="sm"
-                                onClick={() => onSelectHelper(application.helperId)}
+                                onClick={() => onSelectHelper(application.id)}
                             >
                                 Select Helper
                             </Button>

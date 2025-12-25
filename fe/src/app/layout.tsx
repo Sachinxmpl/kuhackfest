@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/layout/Navbar"; 
+import Navbar from "@/components/layout/Navbar";
+import { UserProvider } from "@/contexts/UserContext";
 
 
 const outfit = Outfit({
@@ -23,8 +24,10 @@ export default function RootLayout({
       <body
         className={`${outfit.className} antialiased`}
       >
-        <Navbar/>
-        {children}
+        <UserProvider>
+          <Navbar />
+          {children}
+        </UserProvider>
       </body>
     </html>
   );

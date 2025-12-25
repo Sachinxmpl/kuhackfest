@@ -14,9 +14,10 @@ import { BeaconType } from '@/lib/types';
 export interface BeaconFormProps {
     onSubmit: (data: BeaconFormData) => void;
     onCancel?: () => void;
+    error: string | null;
 }
 
-export default function BeaconForm({ onSubmit, onCancel }: BeaconFormProps) {
+export default function BeaconForm({ onSubmit, onCancel, error }: BeaconFormProps) {
     const {
         register,
         handleSubmit,
@@ -52,27 +53,6 @@ export default function BeaconForm({ onSubmit, onCancel }: BeaconFormProps) {
                 {...register('description')}
             />
 
-            {/* Topic */}
-            <div>
-                <label className="block text-sm font-medium text-zinc-700 mb-1.5">
-                    Topic
-                </label>
-                <select
-                    className="w-full px-3 py-2 border border-zinc-300 rounded-lg text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent"
-                    {...register('title')}
-                >
-                    <option value="">Select a topic</option>
-                    {topicOptions.map((topic) => (
-                        <option key={topic} value={topic}>
-                            {topic}
-                        </option>
-                    ))}
-                </select>
-                {errors.title && (
-                    <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
-                )}
-            </div>
-
             {/* Beacon Type */}
             <div>
                 <label className="block text-sm font-medium text-zinc-700 mb-3">
@@ -82,12 +62,12 @@ export default function BeaconForm({ onSubmit, onCancel }: BeaconFormProps) {
                     <label className="flex items-start gap-3 p-4 border border-zinc-300 rounded-lg cursor-pointer hover:border-zinc-400 transition-colors">
                         <input
                             type="radio"
-                            value="Normal"
+                            value={BeaconType.NORMAL}
                             {...register('type')}
                             className="mt-0.5"
                         />
                         <div>
-                            <div className="font-medium text-zinc-900">Normal</div>
+                            <div className="font-medium text-zinc-900">{BeaconType.NORMAL}</div>
                             <div className="text-sm text-zinc-600">
                                 Open until you find a helper
                             </div>
@@ -97,14 +77,14 @@ export default function BeaconForm({ onSubmit, onCancel }: BeaconFormProps) {
                     <label className="flex items-start gap-3 p-4 border border-orange-300 rounded-lg cursor-pointer hover:border-orange-400 transition-colors bg-orange-50/30">
                         <input
                             type="radio"
-                            value="Urgent"
+                              value={BeaconType.URGENT}
                             {...register('type')}
                             className="mt-0.5"
                         />
                         <div>
                             <div className="font-medium text-zinc-900 flex items-center gap-1">
                                 <AlertCircle className="w-4 h-4 text-orange-600" />
-                                Urgent
+                                {BeaconType.URGENT}
                             </div>
                             <div className="text-sm text-zinc-600">
                                 Time-limited help request
@@ -136,6 +116,14 @@ export default function BeaconForm({ onSubmit, onCancel }: BeaconFormProps) {
                     )}
                 </div>
             )}
+
+            {
+                error && (
+                    <div className="p-4 bg-red-100 border border-red-400 text-red-800 rounded-md">
+                        {error}
+                    </div>
+                )
+            }
 
             {/* Actions */}
             <div className="flex gap-3 pt-2">

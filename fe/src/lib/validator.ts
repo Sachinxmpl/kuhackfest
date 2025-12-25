@@ -50,7 +50,7 @@ export const beaconSchema = z.object({
     title: z.string().min(5, 'Title must be at least 5 characters').max(100, 'Title must be less than 100 characters'),
     description: z.string().min(10, 'Description must be at least 10 characters').max(1000, 'Description must be less than 1000 characters'),
     type: z.enum(BeaconType),
-    status: z.enum(BeaconStatus),
+    status: z.enum(BeaconStatus).default(BeaconStatus.OPEN).optional(),
     urgentDuration: z.number().optional(),
 });
 

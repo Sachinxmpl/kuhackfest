@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import {use} from "react"
+import { use, useState, useEffect } from "react"
 import { mockBeacons, currentUser } from '@/lib/mock-data';
 import { ApplicationFormData } from '@/lib/validator';
 import { generateId } from '@/lib/utils';
@@ -10,31 +10,80 @@ import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { Beacon } from '@/lib/types';
+import { API_BASE_URL } from '@/constants/constants';
 
 export default function ApplyPage({ params }: { params: Promise<{ id: string }> }) {
     const router = useRouter();
     const { id: beaconId } = use(params);
-    const beacon = mockBeacons.find((b) => b.id === beaconId) || mockBeacons[0];
+
+    const [beacon, setBeacon] = useState<Beacon | null>(null);
+    const [beaconFetchError, setBeaconFetchError] = useState<string | null>(null);
+    const [beaconApplyError, setBeaconApplyError] = useState<string | null>(null);
+
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
+    useEffect(() => {
+        const getBeacon = async (id: string) => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/beacons/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token as string,
+                    },
+                });
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    setBeaconFetchError(result.message || 'Failed to fetch beacon details.');
+                    return;
+                }
+
+                setBeacon(result.data as Beacon);
+            } catch (e) {
+                setBeaconFetchError('An error occurred while fetching beacon details.');
+                console.error(e);
+            }
+        }
+
+        if (token) {
+            getBeacon(beaconId);
+        }
+    }, [beaconId, token])
 
     const handleSubmit = async (data: ApplicationFormData) => {
-        // Mock application submission
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        try {
+            const response = await fetch(`${API_BASE_URL}/beacons/${beaconId}/apply`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token as string,
+                },
+                body: JSON.stringify(data),
+            });
 
-        console.log('Application submitted:', {
-            beaconId: beacon.id,
-            helperId: currentUser.id,
-            message: data.message,
-        });
+            const result = await response.json();
 
-        // Redirect back to beacon details
-        router.push(`/beacons/${beacon.id}`);
+            if (!result.success) {
+                setBeaconApplyError(result.message || 'Failed to submit application.');
+                return;
+            }
+
+            // On success, redirect to beacon page
+            router.push(`/beacons/${beaconId}`);
+        } catch (e) {
+            setBeaconApplyError('An error occurred while submitting your application.');
+            console.error(e);
+        }
     };
 
     return (
         <div className="min-h-screen bg-zinc-50">
             <div className="max-w-3xl mx-auto px-4 py-8">
                 {/* Back button */}
-                <Link href={`/beacons/${beacon.id}`}>
+                <Link href={`/beacons/${beacon?.id}`}>
                     <Button variant="ghost" size="sm" className="mb-6">
                         <ArrowLeft className="w-4 h-4" />
                         Back to Beacon
@@ -54,20 +103,20 @@ export default function ApplyPage({ params }: { params: Promise<{ id: string }> 
                 {/* Beacon summary */}
                 <div className="bg-white border border-zinc-200 rounded-lg p-5 shadow-sm mb-6">
                     <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="info">{beacon.status}</Badge>
+                        <Badge variant="info">{beacon?.status}</Badge>
                     </div>
                     <h2 className="text-xl font-semibold text-zinc-900 mb-2">
-                        {beacon.title}
+                        {beacon?.title}
                     </h2>
                     <p className="text-sm text-zinc-600 line-clamp-2">
-                        {beacon.description}
+                        {beacon?.description}
                     </p>
                 </div>
 
                 {/* Application form */}
                 <div className="bg-white border border-zinc-200 rounded-lg p-6 shadow-sm">
                     <ApplicationForm
-                        beaconId={beacon.id}
+                        beaconId={beacon?.id as string}
                         onSubmit={handleSubmit}
                         onCancel={() => router.back()}
                     />

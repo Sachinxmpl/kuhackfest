@@ -13,11 +13,11 @@ import Badge from '@/components/ui/Badge';
 import TagInput from '@/components/profile/TagInput';
 import { Edit2, Save, X, Award, Star, Users } from 'lucide-react';
 import { formatRating } from '@/lib/utils';
-import Image from 'next/image';
+import { useUser } from '@/contexts/UserContext';
 
 export default function ProfilePage() {
     const [isEditing, setIsEditing] = useState(false);
-    const [user, setUser] = useState(currentUser);
+    const { user, setUser } = useUser();
 
     const getExperienceLevel = (helpCount: number = 0) => {
         if (helpCount < 10) return 'Beginner';
@@ -43,13 +43,7 @@ export default function ProfilePage() {
     });
 
     const onSubmit = async (data: ProfileFormData) => {
-        // Mock update - simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        console.log('Profile update:', data);
-
-        // Update user state
-        setUser({ ...user, ...data });
-        setIsEditing(false);
+        
     };
 
     const handleCancel = () => {

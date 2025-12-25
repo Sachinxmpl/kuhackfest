@@ -212,3 +212,45 @@ export const mockSessions: Session[] = [
  * Single-session convenience export (used by older pages)
  */
 export const mockSession: Session = mockSessions[0];
+
+export const INTERESTS = [
+  'Mathematics',
+  'Physics',
+  'Chemistry',
+  'Biology',
+  'Computer Science',
+  'Engineering',
+  'Economics',
+  'Literature',
+  'History',
+  'Psychology',
+  'Philosophy',
+  'Languages',
+];
+
+
+export const SKILLS = [
+  'Problem Solving',
+  'Critical Thinking',
+  'Communication',
+  'Teamwork',
+  'Leadership',
+  'Time Management',
+  'Research',
+  'Data Analysis',
+  'Public Speaking',
+  'Writing',
+  'Programming',
+  'Project Management',
+];
+
+export const ACADEMIC_STREAMS = [
+  'Science',
+  'Commerce',
+  'Humanities',
+  'Engineering',
+  'Medical',
+  'Law',
+  'Business Administration',
+  'Information Technology',
+];

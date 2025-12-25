@@ -9,6 +9,8 @@ import ProfileCard from '@/components/profile/ProfileCard';
 import Textarea from '@/components/ui/Textarea';
 import Button from '@/components/ui/Button';
 import { Send } from 'lucide-react';
+import { useUser } from '@/contexts/UserContext';
+import { User } from '@/lib/types';
 
 export interface ApplicationFormProps {
     beaconId: string;
@@ -21,6 +23,8 @@ export default function ApplicationForm({
     onSubmit,
     onCancel,
 }: ApplicationFormProps) {
+    const { user } = useUser();
+
     const {
         register,
         handleSubmit,
@@ -34,7 +38,7 @@ export default function ApplicationForm({
             {/* User preview */}
             <div>
                 <h3 className="text-sm font-medium text-zinc-700 mb-3">Your Profile</h3>
-                <ProfileCard user={currentUser} showStats={true} />
+                <ProfileCard user={user as User} showStats={true} />
             </div>
 
             {/* Application form */}

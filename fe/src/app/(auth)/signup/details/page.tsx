@@ -9,54 +9,19 @@ import Button from '@/components/ui/Button';
 import { useRouter } from 'next/navigation';
 import { FileUp, BookOpen } from 'lucide-react';
 import { useState } from 'react';
-
-const ACADEMIC_STREAMS = [
-    'Science',
-    'Commerce',
-    'Humanities',
-    'Engineering',
-    'Medical',
-    'Law',
-    'Business Administration',
-    'Information Technology',
-];
-
-const INTERESTS = [
-    'Mathematics',
-    'Physics',
-    'Chemistry',
-    'Biology',
-    'Computer Science',
-    'Engineering',
-    'Economics',
-    'Literature',
-    'History',
-    'Psychology',
-    'Philosophy',
-    'Languages',
-];
-
-
-const SKILLS = [
-    'Problem Solving',
-    'Critical Thinking',
-    'Communication',
-    'Teamwork',
-    'Leadership',
-    'Time Management',
-    'Research',
-    'Data Analysis',
-    'Public Speaking',
-    'Writing',
-    'Programming',
-    'Project Management',
-];
+import { INTERESTS, SKILLS, ACADEMIC_STREAMS } from "@/lib/mock-data"
+import { API_BASE_URL } from '@/constants/constants';
+import { useUser } from '@/contexts/UserContext';
+import { User } from '@/lib/types';
 
 export default function ProfileDetailsPage() {
     const router = useRouter();
+    const { setUser } = useUser();
+
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
     const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const {
         register,
@@ -109,10 +74,50 @@ export default function ProfileDetailsPage() {
     };
 
     const onSubmit = async (data: ProfileDetailsFormData) => {
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        console.log('Profile details:', data);
-        router.push('/profile');
-    };
+        setErrorMessage(null);
+        const dataToSend = {
+            bio: data.bio,
+            interests: data.interests,
+            skills: data.skills,
+        }
+        const token = localStorage.getItem('accessToken');
+        console.log(token)
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/users/profile`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `${token}`,
+                },
+                body: JSON.stringify(dataToSend),
+            });
+
+            const result = await response.json();
+
+            if (!result.success) {
+                setErrorMessage('Profile updation failed. Please try again.');
+                return;
+            }
+            setUser(prev => ({
+                ...prev,
+                profile: {
+                    ...prev?.profile,
+                    bio: data.bio,
+                    interests: data.interests,
+                    skills: data.skills,
+                }
+            }) as User)
+
+            console.log('Profile updation successful:', result.data);
+
+            router.push("/dashboard")
+        } catch (e) {
+            console.error('Profile updation failed:', e);
+            setErrorMessage('Profile updation failed. Please try again later.');
+            return;
+        }
+    }
 
     return (
         <div className="min-h-screen bg-zinc-50 py-12 px-4">
@@ -292,6 +297,12 @@ export default function ProfileDetailsPage() {
                                 </p>
                             )}
                         </div>
+
+                        {
+                            errorMessage && (
+                                <p className="text-sm text-red-600">{errorMessage}</p>
+                            )
+                        }
 
                         {/* Submit Button */}
                         <Button

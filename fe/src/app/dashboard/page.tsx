@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { mockBeacons, currentUser } from '@/lib/mock-data';
-import { Beacon, BeaconStatus, BeaconType } from '@/lib/types';
+import { useState, useMemo, useEffect } from 'react';
+import { mockBeacons } from '@/lib/mock-data';
+import { Beacon, BeaconStatus, BeaconType, User } from '@/lib/types';
 import { BeaconFormData } from '@/lib/validator';
 import BeaconCard from '@/components/beacon/BeaconCard';
 import BeaconFilter from '@/components/beacon/BeaconFilter';
@@ -12,14 +12,53 @@ import Button from '@/components/ui/Button';
 import { Plus, Lightbulb } from 'lucide-react';
 import { generateId } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
+import { API_BASE_URL } from '@/constants/constants';
 
 export default function DashboardPage() {
     const router = useRouter();
-    const [beacons, setBeacons] = useState<Beacon[]>(mockBeacons);
+
+    const [beacons, setBeacons] = useState<Beacon[]>([]);
+    const [beaconCreationError, setBeaconCreationError] = useState<string | null>(null);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedTopic, setSelectedTopic] = useState('');
     const [selectedType, setSelectedType] = useState<BeaconType | 'All'>('All');
+
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') as string : '';
+
+    useEffect(() => {
+        const getAllBeacons = async () => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/beacons`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                });
+
+                const result = await response.json();
+                console.log(result)
+
+                if (!result.success) {
+                    console.error("Failed to fetch beacons:", result.error);
+                    return;
+                }
+
+                const beacons = (result.data as Beacon[]).map((b) => ({
+                    ...b,
+                    createdAt: new Date(b.createdAt),
+                    expiresAt: b.expiresAt ? new Date(b.expiresAt) : undefined,
+                }));
+
+                setBeacons(beacons);
+            } catch (e) {
+                console.error("Failed to fetch beacons.")
+            }
+        }
+
+        getAllBeacons();
+    }, []);
 
     // Filter beacons
     const filteredBeacons = useMemo(() => {
@@ -47,27 +86,47 @@ export default function DashboardPage() {
     }, [filteredBeacons]);
 
     const handleCreateBeacon = async (data: BeaconFormData) => {
-        // Mock create - simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        const newBeacon: Beacon = {
-            id: generateId(),
-            creatorId: currentUser.id,
-            creator: currentUser,
+        const newBeacon = {
             title: data.title,
             description: data.description,
             type: data.type,
-            status: BeaconStatus.OPEN,
-            createdAt: new Date(),
-            expiresAt:
-                data.type === BeaconType.URGENT && data.urgentDuration
-                    ? new Date(Date.now() + data.urgentDuration * 60 * 1000)
-                    : undefined,
+            expiresInMinutes:
+                data.type === BeaconType.URGENT ? data.urgentDuration : undefined,
             applications: [],
         };
 
-        setBeacons([newBeacon, ...beacons]);
-        setIsCreateModalOpen(false);
+        try {
+            const token = localStorage.getItem('token') as string;
+
+            const response = await fetch(`${API_BASE_URL}/beacons`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token
+                },
+                body: JSON.stringify(newBeacon),
+            });
+
+            const result = await response.json();
+
+            if (!result.success) {
+                setBeaconCreationError(result.error || 'Failed to create beacon');
+                return;
+            }
+
+            const beacon = {
+                ...result.data,
+                createdAt: new Date(result.data.createdAt),
+                expiresAt: result.data.expiresAt ? new Date(result.data.expiresAt) : undefined,
+            }
+            console.log(result)
+
+            setIsCreateModalOpen(false);
+            setBeacons([beacon, ...beacons]);
+        } catch (e) {
+            setBeaconCreationError("Failed to create beacon.")
+            console.error("Failed to create beacon.", e)
+        }
     };
 
     const handleApply = (beaconId: string) => {
@@ -149,6 +208,7 @@ export default function DashboardPage() {
                 <BeaconForm
                     onSubmit={handleCreateBeacon}
                     onCancel={() => setIsCreateModalOpen(false)}
+                    error={beaconCreationError}
                 />
             </Modal>
         </div>

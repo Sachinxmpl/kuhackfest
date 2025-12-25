@@ -1,7 +1,7 @@
-// Signup page
 'use client';
 
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signupSchema, type SignupFormData } from '@/lib/validator';
 import Input from '@/components/ui/Input';
@@ -9,9 +9,15 @@ import Button from '@/components/ui/Button';
 import Link from 'next/link';
 import { UserPlus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { API_BASE_URL } from '@/constants/constants';
+import { useUser } from '@/contexts/UserContext';
 
 export default function SignupPage() {
     const router = useRouter();
+    const { setUser } = useUser();
+
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
     const {
         register,
         handleSubmit,
@@ -21,11 +27,33 @@ export default function SignupPage() {
     });
 
     const onSubmit = async (data: SignupFormData) => {
-        // Mock signup - simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        console.log('Signup data:', data);
+        setErrorMessage(null);
+        try {
+            const response = await fetch(`${API_BASE_URL}/auth/signup`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
 
-        // Redirect to profile setup
+            const result = await response.json();
+
+            if (!result.success) {
+                setErrorMessage('Signup failed. Please try again.');
+                return;
+            }
+
+            const token = result.data.token;
+            localStorage.setItem('token', token);
+            setUser(result.data.user);
+            console.log('Signup successful:', result.data);
+        } catch (e) {
+            console.error('Signup failed:', e);
+            setErrorMessage('Signup failed. Please try again later.');
+            return;
+        }
+
         router.push('/signup/details');
     };
 
@@ -74,6 +102,10 @@ export default function SignupPage() {
                             error={errors.confirmPassword?.message}
                             {...register('confirmPassword')}
                         />
+
+                        {errorMessage && (
+                            <p className="text-sm text-red-600">{errorMessage}</p>
+                        )}
 
                         <Button
                             type="submit"

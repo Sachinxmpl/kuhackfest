@@ -10,14 +10,14 @@ export interface CountdownTimerProps {
 }
 
 export default function CountdownTimer({ targetDate, onExpire }: CountdownTimerProps) {
-    const [timeRemaining, setTimeRemaining] = useState(getTimeRemaining(targetDate));
+    const [timeRemaining, setTimeRemaining] = useState(getTimeRemaining(new Date(targetDate)));
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
         setMounted(true);
         
         const timer = setInterval(() => {
-            const remaining = getTimeRemaining(targetDate);
+            const remaining = getTimeRemaining(new Date(targetDate));
             setTimeRemaining(remaining);
             if (remaining.isExpired && onExpire) {
                 onExpire();

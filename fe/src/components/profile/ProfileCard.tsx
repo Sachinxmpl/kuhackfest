@@ -22,15 +22,15 @@ export default function ProfileCard({ user, showStats = true }: ProfileCardProps
                 {/* Avatar */}
                 <div className="relative w-16 h-16 rounded-full overflow-hidden bg-zinc-100 flex-shrink-0">
                     <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-zinc-600">
-                        {user.profile?.name.charAt(0)}
+                        {user?.profile && user.profile.name.charAt(0).toUpperCase()}
                     </div>
                 </div>
 
                 {/* User info */}
                 <div className="flex-1 min-w-0">
-                    <h3 className="text-lg font-semibold text-zinc-900">{user.profile?.name}</h3>
+                    <h3 className="text-lg font-semibold text-zinc-900">{user?.profile?.name}</h3>
                     <div className="flex items-center gap-2 mt-1">
-                        <Badge size="sm">{getExperienceLevel(user.helperStats?.helpCount || 0)}</Badge>
+                        <Badge size="sm">{getExperienceLevel(user?.helperStats?.helpCount || 0)}</Badge>
                         {showStats && (
                             <>
                                 <span className="flex items-center gap-1 text-sm text-zinc-600">
