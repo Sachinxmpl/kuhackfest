@@ -77,8 +77,7 @@ export default function ProfileDetailsPage() {
             interests: data.interests,
             skills: data.skills,
         }
-        const token = localStorage.getItem('accessToken');
-        console.log(token)
+        const token = localStorage.getItem('token');
 
         try {
             const response = await fetch(`${API_BASE_URL}/users/profile`, {
