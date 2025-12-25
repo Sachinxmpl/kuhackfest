@@ -29,7 +29,7 @@ export default function SessionList({
         ))
           : (
             <div>
-              <p className="p-4 text-sm text-zinc-500">No sessions available.</p>
+              <p className="p-4 text-sm text-zinc-500">No active sessions available.</p>
             </div>
           )}
       </div>

@@ -4,7 +4,7 @@ import { messageStore } from '../../lib/message.store.js'; // Import store
 import { appEvents } from '../../lib/events.js';
 
 export class SessionsService {
-    
+
     // ... (getSessionById and getUserSessions remain the same) ...
     async getSessionById(sessionId: string, userId: string) {
         const session = await prisma.session.findUnique({
@@ -23,9 +23,23 @@ export class SessionsService {
     }
 
     async getUserSessions(userId: string) {
-         // ... (existing logic) ...
-         return prisma.session.findMany({
-            where: { OR: [{ learnerId: userId }, { helperId: userId }] },
+        // ... (existing logic) ...
+        return prisma.session.findMany({
+            where: {
+                AND: [
+                    {
+                        OR: [
+                            { learnerId: userId },
+                            { helperId: userId },
+                        ],
+                    },
+                    {
+                        status: {
+                            not: 'COMPLETED',
+                        },
+                    },
+                ],
+            },
             include: {
                 beacon: true,
                 learner: { include: { profile: true } },

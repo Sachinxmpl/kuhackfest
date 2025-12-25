@@ -1,12 +1,9 @@
 import {
   Session,
   SessionStatus,
-  Message,
   User,
   BeaconType,
   BeaconStatus,
-  Participant,
-  LastMessage,
   Beacon,
   BeaconApplication,
 } from '@/lib/types';
@@ -54,42 +51,8 @@ export const urgentDurations = [
   { value: 60, label: '1 hour' },
 ] as const;
 
-/**
- * Small helper participants
- */
-const pAlex: Participant = { userId: 'u1', role: 'learner', name: 'Alex', avatarUrl: '/images/alex.png', online: true };
-const pSam: Participant = { userId: 'u2', role: 'helper', name: 'Sam', avatarUrl: '/images/sam.png', online: false };
-const pJordan: Participant = { userId: 'u3', role: 'learner', name: 'Jordan', avatarUrl: '/images/jordan.png', online: true };
 
-/**
- * Example messages
- */
-const messagesForS1: Message[] = [
-  {
-    id: 'm1',
-    sessionId: 's1',
-    senderId: 'u2',
-    content: 'Sure — join in 5 mins',
-    timestamp: new Date(Date.now() - 1000 * 60 * 5),
-  },
-  {
-    id: 'm2',
-    sessionId: 's1',
-    senderId: 'u1',
-    content: 'Sounds good — I will be ready',
-    timestamp: new Date(Date.now() - 1000 * 60 * 4),
-  },
-];
 
-const messagesForS2: Message[] = [
-  {
-    id: 'm9',
-    sessionId: 's2',
-    senderId: 'u3',
-    content: 'Hey — can you review my generic constraint?',
-    timestamp: new Date(Date.now() - 1000 * 60 * 30),
-  },
-];
 
 /**
  * Mock beacons used on the dashboard
