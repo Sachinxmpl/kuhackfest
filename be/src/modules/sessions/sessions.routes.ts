@@ -12,6 +12,7 @@
 
     router.get('/:id', sessionsController.getSessionById.bind(sessionsController));
 
+    router.get('/:id/messages', sessionsController.getSessionMessages.bind(sessionsController));
 
     router.post('/:id/end', sessionsController.endSession.bind(sessionsController));
 
