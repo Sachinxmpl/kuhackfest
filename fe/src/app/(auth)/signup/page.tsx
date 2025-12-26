@@ -20,13 +20,6 @@ export default function SignupPage() {
 
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
-    useEffect(() => {
-        if (token) {
-            router.push('/dashboard');
-        }
-    }, [token, router]);
-
-
     const {
         register,
         handleSubmit,
